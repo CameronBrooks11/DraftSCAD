@@ -1,8 +1,13 @@
 #### OpenSCAD Dimensioned Drawings
 
-source: [Canny Machines](http://cannymachines.com/entries/9/openscad_dimensioned_drawings) --Don Smiley
+This repository is a continuation of the work initiated by Don Smiley from [Canny Machines](http://cannymachines.com/entries/9/openscad_dimensioned_drawings) and further developed by [pwpearson](https://github.com/pwpearson/dimensional-drawings). My contribution involves repackaging Don Smiley's original library along with pwpearson's enhancements, and providing comprehensive documentation in Markdown.
 
-**Disclaimer:** I am not the author of this library. All credit goes to Don Smiley. All I have done was take his library and website HTML and create a git repo and markdown file.
+Original source by Don Smiley: [dimlines](https://github.com/sidorof/dimlines/tree/master)
+
+Further development by pwpearson: [dimensional-drawings](https://github.com/pwpearson/dimensional-drawings)
+
+**Disclaimer:** This repository builds upon the foundational work by Don Smiley and subsequent enhancements by pwpearson. My contributions are focused on further development and documentation, continuing the evolution of this library.
+
 
 ![Sample Dimension Drawing](./images/sample_part1a.png)
 
