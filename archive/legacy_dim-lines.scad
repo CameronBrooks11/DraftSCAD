@@ -64,7 +64,7 @@
  * Created by Don Smiley
  */
 
-use <OpenSCAD_3D_Text_Generator/TextGenerator.scad>
+use <TextGenerator_after_2015.03.scad>
 
 //  these variables are used within the modules
 DIM_CENTER = 0;
@@ -765,18 +765,18 @@ module sample_circlecenter() {
 
 // uncomment these to sample
 // sample_lines();
-//
+
 // translate([-5.5, 0, 0])
 // sample_dimensions();
-//
+
 // translate([4, 0, 0])
 // sample_circlecenter();
-//
+
 // translate([-2, 3, 0])
 // sample_leaderlines();
-//
+
 // translate([3, 4, 0])
 // sample_titleblock1();
-//
-// translate([0, -2, 0])
-// sample_titleblock2();
+
+//translate([0, -2, 0])
+//sample_titleblock2();
