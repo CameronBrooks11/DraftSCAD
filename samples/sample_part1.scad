@@ -9,7 +9,39 @@
  * created by Don Smiley
  */
 
-include <dimlines.scad>
+
+// Dimension positioning constants
+DIM_CENTER = 0;
+DIM_LEFT = 1;
+DIM_RIGHT = 2;
+DIM_OUTSIDE = 3;
+
+// Orientation constants
+DIM_HORZ = 0;
+DIM_VERT = 1;
+
+// Corner positioning constants
+DIM_UPPER_LEFT = 0;
+DIM_UPPER_RIGHT = 1;
+DIM_LOWER_LEFT = 2;
+DIM_LOWER_RIGHT = 3;
+
+// Line and text related constants
+DIM_LINE_WIDTH = 0.025; // Width of dimension lines
+DIM_SPACE = 0.1;       // Spacing value for line spacing adjustments
+DIM_HEIGHT = 0.01;     // Height of lines
+DIM_HOLE_CENTER = DIM_LINE_WIDTH * 6; // Size of the cross within a circle
+
+// Font scale relative to line widths
+DIM_FONTSCALE = DIM_LINE_WIDTH * 0.7;
+
+// Offset value for hole length
+OFFSET = 0.05; // Added to the hole length to extend past the surface of the cube
+
+use <..\TextGenerator.scad>;
+use <..\title_blocks.scad>;
+use <..\dimensions.scad>;
+use <..\samples.scad>;
 
 //  Sample part -- constants used
 PART_LENGTH = 3.53;
@@ -158,7 +190,7 @@ module show_samplepart() {
 
     }
 
-    color(GREY)
+    color("GREY")
     translate([0, 0, DOC_HEIGHT])
     union() {
         translate([HOLE1_XOFFSET, HOLE_Y1_OFFSET, DIM_HEIGHT])

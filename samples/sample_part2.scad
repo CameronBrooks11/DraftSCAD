@@ -1,11 +1,41 @@
 DOC_SCALING_FACTOR = 100;
 DOC_HEIGHT = 250;
 
-include <dimlines.scad>
+// Dimension positioning constants
+DIM_CENTER = 0;
+DIM_LEFT = 1;
+DIM_RIGHT = 2;
+DIM_OUTSIDE = 3;
 
+// Orientation constants
+DIM_HORZ = 0;
+DIM_VERT = 1;
 
+// Corner positioning constants
+DIM_UPPER_LEFT = 0;
+DIM_UPPER_RIGHT = 1;
+DIM_LOWER_LEFT = 2;
+DIM_LOWER_RIGHT = 3;
+
+// Line and text related constants
+//DIM_LINE_WIDTH = 0.025; // Width of dimension lines
+//DIM_SPACE = 0.1;       // Spacing value for line spacing adjustments
 DIM_LINE_WIDTH = .025 * DOC_SCALING_FACTOR;
 DIM_SPACE = .1 * DOC_SCALING_FACTOR;
+DIM_HEIGHT = 0.01;     // Height of lines
+DIM_HOLE_CENTER = DIM_LINE_WIDTH * 6; // Size of the cross within a circle
+
+// Font scale relative to line widths
+DIM_FONTSCALE = DIM_LINE_WIDTH * 0.7;
+
+// Offset value for hole length
+OFFSET = 0.05; // Added to the hole length to extend past the surface of the cube
+
+use <..\TextGenerator.scad>;
+use <..\title_blocks.scad>;
+use <..\dimensions.scad>;
+use <..\samples.scad>;
+
 
 PART_HEIGHT = 100;
 PART_RADIUS = 200;
@@ -37,12 +67,12 @@ union() {
     // edge of slot
     translate([-SLOT_WIDTH / 2, PART_HEIGHT/ 2 + DIM_SPACE, 0])
     rotate([0, 0, 90])
-    line(DIM_SPACE * 2, line_width=DIM_LINE_WIDTH);
+    line(DIM_SPACE * 2, width=DIM_LINE_WIDTH);
 
     // edge of slot
     translate([SLOT_WIDTH / 2, PART_HEIGHT/ 2 + DIM_SPACE, 0])
     rotate([0, 0, 90])
-    line(DIM_SPACE * 2, line_width=DIM_LINE_WIDTH);
+    line(DIM_SPACE * 2, width=DIM_LINE_WIDTH);
 
     // upper dimensions
     // slot
@@ -53,16 +83,16 @@ union() {
     // right bracket lines
     // top
     translate([PART_RADIUS + DIM_SPACE, PART_HEIGHT / 2, 0])
-    line(DIM_SPACE * 5, line_width=DIM_LINE_WIDTH);
+    line(DIM_SPACE * 5, width=DIM_LINE_WIDTH);
 
     // slot depth
     translate([PART_RADIUS + DIM_SPACE, PART_HEIGHT / 2 - SLOT_DEPTH, 0])
-    line(DIM_SPACE * 2, line_width=DIM_LINE_WIDTH);
+    line(DIM_SPACE * 2, width=DIM_LINE_WIDTH);
 
 
     // bottom
     translate([PART_RADIUS + DIM_SPACE, -PART_HEIGHT / 2, 0])
-    line(DIM_SPACE * 5, line_width=DIM_LINE_WIDTH);
+    line(DIM_SPACE * 5, width=DIM_LINE_WIDTH);
 
     // right dimentsions
     translate([PART_RADIUS + DIM_SPACE * 5, -PART_HEIGHT/ 2 , 0])

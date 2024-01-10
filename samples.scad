@@ -1,5 +1,5 @@
 use <TextGenerator.scad>;
-use <title_blocks.scad>
+use <title_blocks.scad>;
 use <dimensions.scad>;
 
 // ----- Constants -----
@@ -179,14 +179,15 @@ module sample_revisionblock(revisions) {
 
         //  now for the start of actual revisions
         //  do this piecemeal -- draw the vertical first
-
-        for (col = [0: len(cols)]) {
+        echo("len cols: ", len(cols));
+        for (col = [0: len(cols)-1]) {
+            echo(cols[col]);
             translate([cols[col] * DIM_LINE_WIDTH, 0, 0])
             rotate([0, 0, 90])
             line(num_revisions * row_height * DIM_LINE_WIDTH);
         }
 
-        for (row = [0: len(revisions)]) {
+        for (row = [0: len(revisions)-1]) {
             translate([0, row * row_height * DIM_LINE_WIDTH, 0])
             line(revision_width * DIM_LINE_WIDTH);
 
