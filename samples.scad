@@ -429,5 +429,5 @@ sample_leaderlines();
 translate([3, 4, 0])
 sample_titleblock1();
 
-//translate([0, -2, 0])
-//sample_titleblock2();
+translate([0, -2, 0])
+sample_titleblock2();
