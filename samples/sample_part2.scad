@@ -31,7 +31,7 @@ DIM_FONTSCALE = DIM_LINE_WIDTH * 0.7;
 // Offset value for hole length
 OFFSET = 0.05; // Added to the hole length to extend past the surface of the cube
 
-use <..\TextGenerator.scad>;
+use <..\text_generator.scad>;
 use <..\title_blocks.scad>;
 use <..\dimensions.scad>;
 use <..\samples.scad>;

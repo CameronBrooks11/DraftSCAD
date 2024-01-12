@@ -1,4 +1,4 @@
-use <TextGenerator.scad>;
+use <text_generator.scad>;
 use <dimensions.scad>;
 
 // ----- Constants -----

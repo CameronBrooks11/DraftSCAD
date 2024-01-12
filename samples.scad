@@ -1,4 +1,4 @@
-use <TextGenerator.scad>;
+use <text_generator.scad>;
 use <title_blocks.scad>;
 use <dimensions.scad>;
 
