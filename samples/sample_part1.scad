@@ -9,39 +9,10 @@
  * created by Don Smiley
  */
 
+include <..\dimensions.scad>;
+use <samples.scad>;
 
-// Dimension positioning constants
-DIM_CENTER = 0;
-DIM_LEFT = 1;
-DIM_RIGHT = 2;
-DIM_OUTSIDE = 3;
-
-// Orientation constants
-DIM_HORZ = 0;
-DIM_VERT = 1;
-
-// Corner positioning constants
-DIM_UPPER_LEFT = 0;
-DIM_UPPER_RIGHT = 1;
-DIM_LOWER_LEFT = 2;
-DIM_LOWER_RIGHT = 3;
-
-// Line and text related constants
-DIM_LINE_WIDTH = 0.025; // Width of dimension lines
-DIM_SPACE = 0.1;       // Spacing value for line spacing adjustments
-DIM_HEIGHT = 0.01;     // Height of lines
-DIM_HOLE_CENTER = DIM_LINE_WIDTH * 6; // Size of the cross within a circle
-
-// Font scale relative to line widths
-DIM_FONTSCALE = DIM_LINE_WIDTH * 0.7;
-
-// Offset value for hole length
-OFFSET = 0.05; // Added to the hole length to extend past the surface of the cube
-
-use <..\text_generator.scad>;
-use <..\title_blocks.scad>;
-use <..\dimensions.scad>;
-use <..\samples.scad>;
+DOC_HEIGHT = 2;
 
 //  Sample part -- constants used
 PART_LENGTH = 3.53;
@@ -66,7 +37,6 @@ ROT2_VIEW = [0, -2.5, 0];
 ROT3_VIEW = [9, -2, 0];
 ROT4_VIEW = [7, 2, 0];
 
-DOC_HEIGHT = 2;
 
 module sample_part() {
 
@@ -78,18 +48,18 @@ module sample_part() {
             cube([PART_LENGTH / 2, PART_WIDTH, PART_HEIGHT], center=false);
         }
 
-        translate([HOLE1_XOFFSET, HOLE_Y1_OFFSET, -OFFSET / 2])
-        cylinder(h=PART_HEIGHT + OFFSET, r=HOLE1_RADIUS, center=false, $fn=100);
+        translate([HOLE1_XOFFSET, HOLE_Y1_OFFSET, -ZFITE / 2])
+        cylinder(h=PART_HEIGHT + ZFITE, r=HOLE1_RADIUS, center=false, $fn=100);
 
-        translate([HOLE2_XOFFSET, HOLE_Y1_OFFSET, -OFFSET / 2])
-        cylinder(h=PART_HEIGHT + OFFSET, r=HOLE1_RADIUS, center=false, $fn=100);
+        translate([HOLE2_XOFFSET, HOLE_Y1_OFFSET, -ZFITE / 2])
+        cylinder(h=PART_HEIGHT + ZFITE, r=HOLE1_RADIUS, center=false, $fn=100);
 
-        translate([HOLE3_XOFFSET, HOLE_Y2_OFFSET, -PART_HEIGHT - OFFSET / 2])
-        cylinder(h=(PART_HEIGHT  + OFFSET) * 2, r=HOLE2_RADIUS, center=false,
+        translate([HOLE3_XOFFSET, HOLE_Y2_OFFSET, -PART_HEIGHT - ZFITE / 2])
+        cylinder(h=(PART_HEIGHT  + ZFITE) * 2, r=HOLE2_RADIUS, center=false,
             $fn=100);
 
-        translate([HOLE4_XOFFSET, HOLE_Y2_OFFSET, -PART_HEIGHT - OFFSET / 2])
-        cylinder(h=(PART_HEIGHT  + OFFSET) * 2, r=HOLE2_RADIUS, center=false,
+        translate([HOLE4_XOFFSET, HOLE_Y2_OFFSET, -PART_HEIGHT - ZFITE / 2])
+        cylinder(h=(PART_HEIGHT  + ZFITE) * 2, r=HOLE2_RADIUS, center=false,
             $fn=100);
 
     }

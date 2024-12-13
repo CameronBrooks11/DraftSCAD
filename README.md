@@ -8,10 +8,10 @@ Further development by pwpearson: [dimensional-drawings](https://github.com/pwpe
 
 **Disclaimer:** This repository builds upon the foundational work by Don Smiley and subsequent enhancements by pwpearson. My contributions are focused on further development and documentation, continuing the evolution of this library.
 
-
 ![Sample Dimension Drawing](./images/sample_part1a.png)
 
 #### Dimensioned Drawings with OpenSCAD
+
 OpenSCAD is an open-source program used to create 3D objects. Part of its appeal stems from the form of input to create the objects. Unlike some other 3d programs such as Blender, the means of input is essentially a written program that specifies the objects, placement, rotation and other features. By creating a small program, the object can come to life with full control of the characteristics of the object from a text level. That means less messy tweaking on the screen with the mouse and fudged dimensions.
 
 However, suppose that you would like to go into the workshop and create your new creation with manual machining equipment? You quickly run into a problem: A lack of an annotated engineering drawing.
@@ -19,6 +19,7 @@ However, suppose that you would like to go into the workshop and create your new
 This program represents a first pass at enabling dimensioned drawings. While by no means complete, useful work can be performed with the modules included here.
 
 #### General Approach
+
 The approach uses a top view in OpenSCAD with all of the dimensioned lines and text on the xy plane. Combing multiple views of your object in various projections and translations with dimensioned lines overlayed on a plane just above your object will give the illusion of a dimensioned drawing.
 
 The image below shows a portion of the previous image, still primarily a top view, but rotated to break the illusion of a flat drawing.
@@ -26,23 +27,18 @@ The image below shows a portion of the previous image, still primarily a top vie
 ![Rotated Detail](./images/rotated_detail.png)
 
 #### Dimensioning Elements Available
+
 A number of elements must come together to implement dimensioning. There must be lines, some with arrows, and some without. Written annotations must accompany the lines to provide dimensions and other written descriptions. In addition, there are a number of conventions associated with annotations and a partial implementation of such functions are included.
 
 #### Getting Started
-Download the zip file [here](http://cannymachines.com/static/downloads/dimlines.zip)
 
-The source for text generation is found at [http://www.thingiverse.com/thing:59817](http://www.thingiverse.com/thing:59817) , and I gratefully acknowledge user PGreenland on that site for creating this dotmatrix style font.
-
-Download his file first, TextGenerator.scad, before attempting to run this program.
-
-Using this file enabled the quick creation of the dimensioning modules found here. A later task associated with text would be the later creation of additional annotating symbols not found within this file. However, it enables a good start to many dimensioning functions.
-
-To use dimlines, you must first include dimlines.scad.
+Clone this repository to your OpenSCAD libraries directory and include "draftSCAD.scad" in your project
 
 #### Lines
+
 This module draws a line that can have an arrow on either end. Because the intended use is to be viewed strictly from above, the height of the line is set arbitrarily thin.
 
-![Sample Lines](./images/sample_linesa.png) 
+![Sample Lines](./images/sample_linesa.png)
 
 The default orientation is a horizontal line along the x axis. Therefore, any other orientations would be handled with the usual rotation function.
 
@@ -69,6 +65,7 @@ There is also a module, arrow, which is used to create the arrow, but it is unli
 One choice made for primitives in OpenSCAD involves the selection of `center=true` or `center=false`. A line is treated somewhat differently here. A line length is treated as `center=false`. This enables a intuitive positioning of lines for dimensioning, leader lines, etc. However, the width of the line is centered `(center=true)` to avoid wasting time translating the line by a half-line width when drawing the bounding lines for dimension lines.
 
 #### Dimensions
+
 Dimensioning entails in large part drawing lines with arrows enclosing a dimension.
 
 ![sample dimension lines in OpenSCAD](./images/sample_dimensionsa.png)
@@ -113,6 +110,7 @@ line(length=mylength, left_arrow=true); // line with left arrow
 ```
 
 #### Hole Center Cross
+
 This module creates a cross in the center of hole. It also draws the guides that intersect the radius.
 
 ![Sample dimension lines in OpenSCAD](./images/sample_hole_centera.png)
@@ -133,6 +131,7 @@ circle_center(radius=radius, size=DIM_HOLE_CENTER,
 The dimension lines that partially extend over an object will be set by you as according to your taste. I have viewed documentation where a line to hole extends clear across an object, or just extends slightly over its edge. So, this function will does not attempt to handle any of that. That can be done via appropriate use of the line module.
 
 #### Leader Lines
+
 Leader lines serve multiple purposes. For example, pointing directly at the center of a circle with the arrow resting against the radius, provides the dimensions of a hole or shaft when viewed on end.
 
 Another use of a leader line arises when pointing out the name of an object when showing an assembly of parts.
@@ -179,6 +178,7 @@ for (i = [1:4]) {
 ```
 
 #### Title Blocks
+
 To account for the variety of title blocks found on drawings, the module for creating title blocks builds the blocks from a series of arrays passed into the module that comprise a definition of the type and placement of lines, title descriptions, and text describing the object at hand. With these three elements a wide variety of title blocks can be made.
 
 The full version of sample title block can be found on the `dimlines.scad` file under the module, **sample_titleblock1**.
@@ -194,6 +194,7 @@ The idea is that the messy details for all the lines, text, etc are embodied in 
 In the next few sections an example of a title block will be created. The actual format of this title block is somewhat like the example presented in [Wikipedia](http://en.wikipedia.org/wiki/Engineering_drawing#Title_block) as an example of a title block.
 
 #### Title Block Lines
+
 The lines array is structured in the following fashion:
 
 ```
@@ -238,6 +239,7 @@ lines = [
 This code example shows the format of the lines. As you can see, the coordinates and lengths are fairly straight-forward. One aspect that might be confusing is the use of -1 for a starting x position rather that 0 on the horizontal lines. This value is chosen to adjust the line spacing associated with the line thickness of 2 versus 1. My usual approach involves starting with something that seems reasonable, and then adjusting/saving with automatic/reload until it finally appears to be correct.
 
 #### Title Block Descriptions and Details
+
 ```
 descs    = [[startx, starty, horz/vert, text, size],
             [startx, starty, horz/vert, text, size]]
@@ -291,6 +293,7 @@ and you will get:
 ![Sample Title Block 1](./images/sample_titleblock1a.png)
 
 #### Another Sample Title Block
+
 Now that you have seen on example of a title block, it might be helpful to see a slightly more complicated version of one. Like many things, the complexity can be reduced by breaking up components until small bite-sized chunks.
 
 The full version of sample title block can be found on the **dimlines.scad** file under the module, `sample_titleblock2`.
@@ -346,7 +349,9 @@ lines = [
     [cols[3], rows[0], DIM_VERT, -rows[7], 1],
 ];
 ```
+
 #### Breaking up the Textual Descriptions
+
 Separating the textual descriptions by category simplifies building the title block. Separate arrays are built for each category. Separating these arrays suggests that a separate file with for the org_details array could be stored and included so that you would only have to do that once.
 
 ```
@@ -529,6 +534,7 @@ sample_revisionblock(revisions);
 At this point, you will have your revision block, on its side next to the calling titleblock. Note, that the revision title block could have been built on its side initially. To me it seems easier to look at the text without tipping my head, since OpenSCAD is so good at simply rotating anything.
 
 #### Scaling Dimensions to Match the Objects
+
 As discussed in the very beginning, sizing the dimensional components to match the relative size of your object will be important.
 
 One way to do this is:
@@ -547,6 +553,7 @@ Note that the `DOC_SCALING_FACTOR` constant is put on a line above the `include`
 By doubling the constants, any line will be twice as wide as before. Note the lengths of lines are unaffected. Those values are explicitly set.
 
 #### Suggested Approach to Documentation
+
 The modules have been designed to flexibly handle a variety of conditions. The following are some suggestions that can ease the burden of consistency within a mass of parts.
 
 The OpenSCAD approach to constants or variables can be confusing at first. However, you can use that approach with variables to your advantage by organizing your constants in a hierarchical fashion.
@@ -681,6 +688,7 @@ Finally, in a larger system, you could maintain a hierarchical tree structure:
 By doing a little organizing up front, you would get a lot of consistency with less on-going effort.
 
 #### Future Directions
+
 There are a number of symbols that would be helpful to include in the documentation. This might involve modifying text generating file or exploring a swap from some other source.
 
 Scaling remains an issue because there is not an effective method for generating an image that would be exactly a certain size. If there was a function for specifying a viewport that would help. Also, you would need more control over specifying the expected pixels per inch on your output.

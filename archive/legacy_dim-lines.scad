@@ -101,7 +101,7 @@ DIM_FONTSCALE = DIM_LINE_WIDTH * .7;
 
 
 
-OFFSET = .05; // added to the hole length to extend past the surface of the cube
+ZFITE = .05; // added to the hole length to extend past the surface of the cube
 
 module arrow(arr_points, arr_length, height) {
     // arrow points to the left
