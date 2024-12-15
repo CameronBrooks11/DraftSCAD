@@ -1,4 +1,4 @@
-include <..\dimensions.scad>;
+include <..\dimdraft.scad>;
 
 module sample_titleblock1() {
     /* sample titleblock
@@ -162,7 +162,7 @@ module sample_revisionblock(revisions) {
                 translate([(cols[col] + desc_x) * DIM_LINE_WIDTH,
                     ((row + 1) * row_height + desc_y) * DIM_LINE_WIDTH, 0])
                 scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE])
-                drawtext(revisions[row][col]);
+                text(revisions[row][col]);
             }
         }
 

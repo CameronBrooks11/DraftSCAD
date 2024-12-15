@@ -11,7 +11,7 @@
 
     Usage:
     1. Import module
-    2. Call drawtext("string")
+    2. Call text("string")
 
     License:
     This work is licensed under the Creative Commons - Attribution - Share Alike (CC BY-SA) license.
@@ -22,12 +22,12 @@
 
 
 //Draw text
-//scale([4,4,4]) drawtext("Hello World!");
+//scale([4,4,4]) text("Hello World!");
 
 //Draw character set
-//scale([2,2,2]) drawtext(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}");
+//scale([2,2,2]) text(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}");
 
-module drawtext(text) {
+module text(text) {
 	//Characters
 	chars = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}";
 

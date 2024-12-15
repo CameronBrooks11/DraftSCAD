@@ -516,7 +516,7 @@ In this next section, we first translate our position to a location consistent w
                 translate([(cols[col] + desc_x) * DIM_LINE_WIDTH,
                     ((row + 1) * row_height + desc_y) * DIM_LINE_WIDTH, 0])
                 scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE])
-                drawtext(revisions[row][col]);
+                text(revisions[row][col]);
             }
         }
 

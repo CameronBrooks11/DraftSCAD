@@ -9,7 +9,7 @@
  * created by Don Smiley
  */
 
-include <..\dimensions.scad>;
+include <..\dimdraft.scad>;
 use <samples.scad>;
 
 DOC_HEIGHT = 2;

@@ -1,6 +1,6 @@
 SCALING_FACTOR = 100;
 
-include <..\dimensions.scad>;
+include <..\dimdraft.scad>;
 
 DOC_HEIGHT = 250;
 
