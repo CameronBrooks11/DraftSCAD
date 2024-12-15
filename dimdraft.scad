@@ -217,6 +217,23 @@ module leader_line(angle, radius, angle_length, horz_line_length, direction = DI
         }
     }
 }
+
+module draw_frame(length, height, line_width=DIM_LINE_WIDTH) {
+
+    line(length=length, width=line_width);
+
+    translate([0, height, 0])
+    line(length=length, width=line_width);
+
+    translate([line_width / 2, line_width / 2, 0])
+    rotate([0, 0, 90])
+    line(length=height - line_width, width=line_width);
+
+    translate([length - line_width / 2, line_width / 2, 0])
+    rotate([0, 0, 90])
+    line(length=height - line_width, width=line_width);
+}
+
 module titleblock(lines, descs, details)
 {
     /* titleblock

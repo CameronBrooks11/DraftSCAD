@@ -8,9 +8,8 @@
  * More on this can be found at http://CannyMachines.com
  * created by Don Smiley
  */
-
 include <..\dimdraft.scad>;
-use <samples.scad>;
+use <drawingFrame_cannymachines.scad>;
 
 DOC_HEIGHT = 2;
 
@@ -36,7 +35,6 @@ ROTATION4 = [135, 45, 0];
 ROT2_VIEW = [0, -2.5, 0];
 ROT3_VIEW = [9, -2, 0];
 ROT4_VIEW = [7, 2, 0];
-
 
 module sample_part() {
 
@@ -347,32 +345,12 @@ module show_samplepart() {
 
 }
 
-
-module draw_frame(length, height, line_width=DIM_LINE_WIDTH) {
-
-    line(length=length, width=line_width);
-
-    translate([0, height, 0])
-    line(length=length, width=line_width);
-
-    translate([line_width / 2, line_width / 2, 0])
-    rotate([0, 0, 90])
-    line(length=height - line_width, width=line_width);
-
-    translate([length - line_width / 2, line_width / 2, 0])
-    rotate([0, 0, 90])
-    line(length=height - line_width, width=line_width);
-
-}
-
 show_samplepart();
+
 color("Black")
 translate([-3, -7.0, DOC_HEIGHT])
-color("Black")
 union() {
     draw_frame(length=17, height=11, line_width=DIM_LINE_WIDTH * 2);
-
-    color("Black")
     translate([10.22, 3.5, 0])
-    sample_titleblock2();
+    drawingFrameCM();
 }
