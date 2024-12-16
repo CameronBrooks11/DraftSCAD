@@ -1,1 +1,2 @@
-// placeholder to add functions for annotations (notes, symbols, material specs, and standards)
+// Placeholder for annotation functions
+// (e.g., adding notes, symbols, material specifications, and standard references)
