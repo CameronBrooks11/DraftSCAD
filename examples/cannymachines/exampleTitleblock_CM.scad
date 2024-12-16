@@ -1,10 +1,10 @@
-include <../dimdraft.scad>;
+include <../../dimdraft.scad>;
 
-module drawingFrameCM() {
+module exampleTitleblockCM() {
 
     row_height = 20;
 
-    cols = [-.5, 100, 154, 270];
+    cols = [0, 110, 174, 290];
     title_width = cols[3];
 
     rows = [0, -row_height, -row_height * 2, -row_height * 3, -row_height * 4,
@@ -13,9 +13,9 @@ module drawingFrameCM() {
 
     // spacing tweaks to fit into the blocks
     desc_x = 2; // column offset for start of small text
-    desc_y = -5; // row offset for start of small text
+    desc_y = -7; // row offset for start of small text
     det_x = 15;  // col offset for start of detail text
-    det_y = -15;  // row offset for start of detail text
+    det_y = -17;  // row offset for start of detail text
     desc_size = .75; // relative size of description text
 
 
@@ -117,8 +117,6 @@ module drawingFrameCM() {
 
     rotate([0, 0, 90])
     sample_revisionblock(revisions);
-
-
 }
 
 
@@ -129,12 +127,12 @@ module sample_revisionblock(revisions) {
 
     // revision block headings
     row_height = 15;
-    revision_width = 100;
+    revision_width = 120;
     desc_x = 2;
     desc_y = -10;
     desc_size = 1;
 
-    cols = [0, 20, 60, revision_width];
+    cols = [0, 20, 80, revision_width];
     rows = [0, -row_height, -row_height * 2];
 
     // draw
@@ -165,7 +163,7 @@ module sample_revisionblock(revisions) {
     details = [];
     num_revisions = len(revisions);
 
-    translate([-(revision_width + 40) * DIM_LINE_WIDTH,
+    translate([-(revision_width + 20) * DIM_LINE_WIDTH,
               row_height * 2 * DIM_LINE_WIDTH, 0])
     union() {
         titleblock(lines, descs, details);
@@ -188,6 +186,7 @@ module sample_revisionblock(revisions) {
                 translate([(cols[col] + desc_x) * DIM_LINE_WIDTH,
                     ((row + 1) * row_height + desc_y) * DIM_LINE_WIDTH, 0])
                 scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE])
+                color("black")
                 text(revisions[row][col]);
             }
         }

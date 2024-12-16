@@ -1,4 +1,4 @@
-include <../dimdraft.scad>;
+include <../../dimdraft.scad>;
 
 module drawingFrameDS() {
     /* sample titleblock

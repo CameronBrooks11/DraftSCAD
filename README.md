@@ -296,7 +296,7 @@ and you will get:
 
 Now that you have seen on example of a title block, it might be helpful to see a slightly more complicated version of one. Like many things, the complexity can be reduced by breaking up components until small bite-sized chunks.
 
-The full version of sample title block can be found on the **dimlines.scad** file under the module, `drawingFrameCM`.
+The full version of sample title block can be found on the **dimlines.scad** file under the module, `exampleTitleblockCM`.
 
 The following image portrays our completed title block, which might help you to understand the pieces as we go.
 

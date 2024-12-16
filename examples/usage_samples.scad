@@ -15,7 +15,7 @@ module sample_lines(){
         line(length=2, width=DIM_LINE_WIDTH, height=DIM_HEIGHT, left_arrow=true,
             right_arrow=true);
     }
-}
+} 
 
 module sample_dimensions() {
 
