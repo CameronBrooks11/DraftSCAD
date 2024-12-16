@@ -1,6 +1,6 @@
-include <../../dimdraft.scad>;
+include <../dimdraft.scad>;
 
-module drawingFrameDS() {
+module titleblock1() {
     /* sample titleblock
      *
      * Note the use of double thickness lines around the perimeter. Any line
