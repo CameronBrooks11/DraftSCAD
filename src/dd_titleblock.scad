@@ -1,27 +1,27 @@
 
+
+
+
 module titleblock(lines, descs, details, color = "black", text_color = "black")
 {
-    /* titleblock
-     *
-     * This module accepts the following arrays with formats:
-     *
-     * holds the description of the lines. width is a factor that
-     * expands the line width beyond DIM_LINE_WIDTH
-     *
-     * lines     = [[startx, starty, horz/vert, length, width],
-     *              [startx, starty, horz/vert, length, width]]
-     *
-     * holds the descriptions of the title blocks. these are meant to sit in
-     * the upper left corner. size, like width above, is a factor that
-     * increases/decreases the size of the font
-     *
-     * descs    = [[startx, starty, horz/vert, text, size],
-     *             [startx, starty, horz/vert, text, size]]
-     *
-     * holds the detail associated with the part being documented
-     *
-     * details    = [[startx, starty, horz/vert, text, size],
-     *               [startx, starty, horz/vert, text, size]]
+    /*
+     * titleblock(lines, descs, details, color, text_color)
+     * Creates a title block for a drawing sheet, including lines, descriptions, and details.
+     * Parameters:
+     * - lines: Array defining the lines in the title block with format:
+     *           [[startx, starty, orientation, length, width], ...]
+     *           - orientation: Use DIM_HORZ or DIM_VERT for horizontal/vertical lines.
+     *           - width: Factor to scale the line width beyond DIM_LINE_WIDTH.
+     * - descs: Array defining descriptive text blocks with format:
+     *           [[startx, starty, orientation, text, size], ...]
+     *           - size: Factor to scale font size beyond DIM_FONTSCALE.
+     * - details: Array defining part-specific details with format:
+     *           [[startx, starty, orientation, text, size], ...]
+     * - color: Line color (default: "black").
+     * - text_color: Text color (default: "black").
+     * Behavior:
+     * - Draws lines and places text (descriptions and details) at specified positions.
+     * - Handles horizontal and vertical orientations for text and lines.
      */
 
     DIM_FONTSCALE = DIM_LINE_WIDTH * 0.7;

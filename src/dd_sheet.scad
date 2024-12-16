@@ -1,8 +1,24 @@
 
+
+
+
 include <../drawing_sheet_sizes.scad>;
 
 module draw_sheet(length = undef, height = undef, sheet_symbol = undef, line_width = DIM_LINE_WIDTH, color = "black")
 {
+    /*
+     * draw_sheet(length, height, sheet_symbol, line_width, color)
+     * Draws a sheet boundary based on given dimensions or a standard sheet symbol.
+     * Parameters:
+     * - length: Length of the sheet (overridden if sheet_symbol is provided).
+     * - height: Height of the sheet (overridden if sheet_symbol is provided).
+     * - sheet_symbol: Standard sheet size identifier (e.g., "A4", "ANSI_B").
+     * - line_width: Thickness of the sheet boundary lines.
+     * - color: Optional parameter to set the frame's color.
+     * Behavior:
+     * - If sheet_symbol matches a standard, uses its dimensions; otherwise, uses provided length and height.
+     */
+
     // If a sheet symbol is provided, override length and height using the sheet_sizes array
     if (!is_undef(sheet_symbol))
     {
@@ -38,6 +54,18 @@ module draw_sheet(length = undef, height = undef, sheet_symbol = undef, line_wid
 
 module draw_frame(length, height, line_width = DIM_LINE_WIDTH, color = "black")
 {
+    /*
+     * draw_frame(length, height, line_width, color)
+     * Draws the rectangular frame of a sheet with specified dimensions and line width.
+     * Parameters:
+     * - length: Length of the sheet frame.
+     * - height: Height of the sheet frame.
+     * - line_width: Thickness of the frame lines.
+     * - color: Optional parameter to set the frame's color.
+     * Behavior:
+     * - Creates a rectangular frame with horizontal and vertical lines.
+     */
+
     color(color)
     {
         line(length = length, width = line_width);

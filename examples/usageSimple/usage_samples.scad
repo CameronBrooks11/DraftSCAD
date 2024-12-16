@@ -1,4 +1,4 @@
-include <..\dimdraft.scad>;
+include <../../dimdraft.scad>;
 
 module sample_lines(){
     // sample lines
