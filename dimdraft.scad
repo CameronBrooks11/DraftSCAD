@@ -12,6 +12,8 @@ DIM_HOLE_CENTER = DIM_LINE_WIDTH * 6; // Size of the cross within a circle
 // Font scale relative to line widths
 DIM_FONTSCALE = DIM_LINE_WIDTH * 0.7;
 
+DIM_GRID_SPACING = 50; // Default grid spacing value, standard for most drawings (i.e. ISO, ANSI, etc.)
+
 // ----- Constants -----
 // Dimension positioning constants
 DIM_CENTER = 0;
@@ -35,4 +37,3 @@ ZFITE = 0.05; // Added to the hole length to extend past the surface of the cube
 include <src/dd_dimlines.scad>;
 include <src/dd_sheet.scad>;
 include <src/dd_titleblock.scad>;
-include <src/dd_annotations.scad>;

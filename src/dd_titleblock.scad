@@ -1,7 +1,3 @@
-
-
-
-
 module titleblock(lines, descs, details, color = "black", text_color = "black")
 {
     /*

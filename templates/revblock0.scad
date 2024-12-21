@@ -1,6 +1,6 @@
 include <../dimdraft.scad>;
 
-module revblock0(revisions)
+module revblock0(revisions, fill = true)
 {
     DIM_FONTSCALE = DIM_LINE_WIDTH * .7;
 
@@ -44,4 +44,10 @@ module revblock0(revisions)
                                                                  DIM_HORZ, revisions[rev][col], desc_size]];
 
     titleblock(lines, descs, details);
+    if(fill) {
+        color("white") {
+            translate([ 0, -row_height * (2 + n_revisions) * DIM_LINE_WIDTH, -DIM_LINE_WIDTH])
+                cube([revision_width * DIM_LINE_WIDTH + DIM_LINE_WIDTH, row_height * (2 + n_revisions) * DIM_LINE_WIDTH, DIM_LINE_WIDTH]);
+        }
+    }
 }

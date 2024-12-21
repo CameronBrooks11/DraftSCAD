@@ -19,16 +19,16 @@ use <exampleView4_CM.scad>;
 
 DOC_HEIGHT = 2;
 
-view1Pos = [ 2, 7, 0 ];
+view1Pos = [ 3, 7, 0 ];
 translate(view1Pos) exampleView1_CM(DOC_HEIGHT);
 
-view2Pos = [ 2, 5, 0 ];
+view2Pos = [ 3, 5, 0 ];
 translate(view2Pos) exampleView2_CM(DOC_HEIGHT);
 
-view3Pos = [ 13, 5, 0 ];
+view3Pos = [ 13, 5 + 0.15, 0 ];
 translate(view3Pos) exampleView3_CM(DOC_HEIGHT);
 
-view4Pos = [ 10, 9, 0 ];
+view4Pos = [ 10, 8.5, 0 ];
 translate(view4Pos) exampleView4_CM(DOC_HEIGHT);
 
 // aspects of the part
@@ -52,7 +52,7 @@ doc_details = [
 org_details = [ "My Logo", "Canny Machines", "Org Address, phone" ];
 
 // title block
-translate([ 9.7, 3.5, 0 ]) titleblock0(part_details, doc_details, org_details);
+translate([ 9.7, 3.52, 0 ]) titleblock0(part_details, doc_details, org_details);
 
 revisions = [
     [ "1a", "2013-4-1", "ds" ],
@@ -66,7 +66,14 @@ revisions = [
 ];
 
 // revision block
-translate([ DIM_LINE_WIDTH, 3.4, 0 ]) revblock0(revisions);
-
+translate([ DIM_LINE_WIDTH * 2, 3.4, 0 ]) revblock0(revisions);
+sheet_len = 17;
+sheet_height = 11;
+grid_space = 0.5;
 // drawing frame
-draw_sheet(length = 17, height = 11, line_width = DIM_LINE_WIDTH * 2);
+translate([ 0, 0, -DIM_LINE_WIDTH ])
+    draw_sheet(length = sheet_len, height = sheet_height, grid_type = "Dot", grid_dim = 0.5);
+
+color("black") translate([ grid_space * 10, grid_space * 1.5, 0 ])
+    text(text = str("Grid Scale: ", grid_space, " mm"), size = grid_space / 2, valign = "center", halign = "left",
+         font = "Liberation Sans:style=Bold Italic");

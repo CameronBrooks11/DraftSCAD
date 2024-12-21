@@ -1,6 +1,6 @@
 include <../dimdraft.scad>;
 
-module titleblock0(part_details, doc_details, org_details)
+module titleblock0(part_details, doc_details, org_details, fill = "true")
 {
 
     row_height = 20;
@@ -79,6 +79,13 @@ module titleblock0(part_details, doc_details, org_details)
     ];
 
     titleblock(lines, descs, details);
+
+    if (fill) {
+        color("white") {
+            translate([ 0, -row_height * 7 * DIM_LINE_WIDTH, -DIM_LINE_WIDTH ])
+                cube([title_width * DIM_LINE_WIDTH, row_height * 7 * DIM_LINE_WIDTH, DIM_LINE_WIDTH]);
+        }
+    }
 }
 
 module sample_revisionblock()

@@ -1,6 +1,6 @@
 include <../dimdraft.scad>;
 
-module titleblock1() {
+module titleblock1(fill = true) {
     /* sample titleblock
      *
      * Note the use of double thickness lines around the perimeter. Any line
@@ -11,16 +11,16 @@ module titleblock1() {
      * You can see that in the horizontal lines in the first section that are
      * offset by 1, which is the half-width of the outside line.
      */
-    title_width = 290;
-    row_height = 15;
+    title_width = 330;
+    row_height = 25;
 
-    cols = [-1, 50, 114, 200, 215, 260];
+    cols = [-1, 60, 126, 210, 235, 300];
     rows = [0, -row_height, -row_height * 2, -row_height * 3, -row_height * 4];
 
     // spacing tweaks to fit into the blocks
     desc_x = 2; // column offset for start of small text
-    desc_y = -5; // row offset for start of small text
-    det_y = -12;  // row offset for start of detail text
+    desc_y = -8; // row offset for start of small text
+    det_y = -18;  // row offset for start of detail text
     desc_size = .75; // relative size of description text
 
     lines = [
@@ -68,17 +68,17 @@ module titleblock1() {
 
     details = [
         [cols[0] + desc_x,  rows[0] + det_y, DIM_HORZ,
-            " ", 1], //Responsible dep.
+            "SCADY", 1], //Responsible dep.
         [cols[1] + desc_x, rows[0] + det_y, DIM_HORZ,
-            " ", 1], //Technical reference
+            "SAMP-DS", 1], //Technical reference
         [cols[2] + desc_x, rows[0] + det_y, DIM_HORZ,
             "D. Smiley ", 1], //Creator
         [cols[3] + desc_x, rows[0] + det_y, DIM_HORZ,
-            " ", 1], //Approval person
+            "C. Brooks ", 1], //Approval person
         [cols[0] + desc_x + 10, rows[2] + det_y, DIM_HORZ,
             "My OpenSCAD Project", 1],
         [cols[2] + desc_x, rows[1] + det_y, DIM_HORZ,
-            " ", 1], //Document type
+            ".scad", 1], //Document type
         [cols[3] + desc_x, rows[1] + det_y, DIM_HORZ,
             "First issue", 1], //Document status
         [cols[2] + desc_x, rows[2] + det_y, DIM_HORZ,
@@ -86,7 +86,7 @@ module titleblock1() {
         [cols[3] + desc_x, rows[2] + det_y, DIM_HORZ,
             "123", 1], //Identification number
         [cols[3] + desc_x, rows[3] + det_y, DIM_HORZ,
-            " ", 1], //Rev
+            "B", 1], //Rev
         [cols[4] + desc_x, rows[3] + det_y, DIM_HORZ,
             "2013-3-31", 1], //Date of issue
         [cols[5] + desc_x, rows[3] + det_y, DIM_HORZ,
@@ -95,4 +95,11 @@ module titleblock1() {
 
 
     titleblock(lines, descs, details);
+
+    if(fill) {
+        color("white") {
+            translate([0, -row_height * 4 * DIM_LINE_WIDTH, -DIM_LINE_WIDTH])
+                cube([title_width * DIM_LINE_WIDTH, row_height * 4 * DIM_LINE_WIDTH, DIM_LINE_WIDTH]);
+        }
+    }
 }

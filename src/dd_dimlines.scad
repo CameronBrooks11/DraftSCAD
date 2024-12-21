@@ -1,13 +1,3 @@
-
-
-
-
-
-
-
-
-
-
 module arrow(arr_points, arr_length, height, color = "black")
 {
     /*

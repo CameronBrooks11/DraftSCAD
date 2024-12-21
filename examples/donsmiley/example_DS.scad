@@ -16,6 +16,13 @@ translate([ 500, 400, 0 ]) exampleView2_DS();
 
 translate([ 1200, 600, 0 ]) exampleView3_DS();
 
-translate([ 0, 0, DOC_HEIGHT ]) draw_sheet(length = 1700, height = 1100, line_width = DIM_LINE_WIDTH * 2);
+sheet_len = 1700;
+sheet_height = 1100;
+translate([ 0, 0, DOC_HEIGHT - DIM_LINE_WIDTH ])
+    draw_sheet(length = sheet_len, height = sheet_height, grid_type = "Dot");
 
-translate([ 975, 155, DOC_HEIGHT ]) titleblock1();
+translate([ 875, 254, DOC_HEIGHT ]) titleblock1();
+
+color("black") translate([ DIM_GRID_SPACING * 6, DIM_GRID_SPACING * 1.5, 0 ])
+    text(text = str("Grid Scale: ", DIM_GRID_SPACING, " mm"), size = 20, valign = "center", halign = "left",
+         font = "Liberation Sans:style=Bold Italic");
