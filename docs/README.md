@@ -4,6 +4,8 @@
 
 _Note: This is out of date and needs a serious rework, in the current state it is a better reflection of what the library used to be._
 
+**_At this time a more informative source of documentation on the current state of the library is to consult the [examples](../examples/README.md)._**
+
 The approach uses a top view in OpenSCAD with all of the dimensioned lines and text on the xy plane. Combing multiple views of your object in various projections and translations with dimensioned lines overlayed on a plane just above your object will give the illusion of a dimensioned drawing.
 
 The image below shows a portion of the previous image, still primarily a top view, but rotated to break the illusion of a flat drawing.
@@ -129,7 +131,7 @@ radius = .25;
 for (i = [0:6]) {
     leader_line(angle=i * 15, radius=.25, angle_length=(i * .25),
                 horz_length=.5, direction=DIM_RIGHT,
-               
+
                 text=str("leader line angle: ", i * 15 + 90),
                 do_circle=false
                );
@@ -139,13 +141,13 @@ for (i = [1:7]) {
     leader_line(angle=i * 20 + 90, radius=.25,
                 angle_length=.75,
                 horz_length=.5, direction=DIM_LEFT,
-               
+
                 text=str("leader line angle: ", i * 20 + 90));
 }
 for (i = [1:4]) {
     leader_line(angle=-i * 20, radius=.25, angle_length=1.5,
                 horz_length=.25, direction=DIM_RIGHT,
-               
+
                 text=str(i),
                 do_circle=true
                );

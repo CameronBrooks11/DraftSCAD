@@ -11,6 +11,7 @@ However, creating manual machining equipment or workshop-ready creations often r
 This library employs a top-down view in OpenSCAD, with dimensioned lines and text displayed on the XY plane. By combining multiple views of your object with projected and translated dimensioned lines, you can create the illusion of a complete dimensioned drawing.
 
 A number of elements must come together to implement dimensioning:
+
 - Lines, with or without arrows.
 - Annotated dimensions and other textual descriptions.
 - Support for common annotation conventions.
@@ -27,5 +28,6 @@ To get started, explore the [documentation](docs/README.md) and the [examples](e
 ## Acknowledgements
 
 This repository builds upon the work of:
+
 - Don Smiley from [Canny Machines](http://cannymachines.com/entries/9/openscad_dimensioned_drawings).
 - pwpearson's enhancements on Canny Machines: [dimensional-drawings](https://github.com/pwpearson/dimensional-drawings).
