@@ -1,10 +1,12 @@
 # Docs
 
-### General Approach
-
 _Note: This is out of date and needs a serious rework, in the current state it is a better reflection of what the library used to be._
 
 **_At this time a more informative source of documentation on the current state of the library is to consult the [examples](../examples/README.md)._**
+
+If you want to contribute see [TODO](TODO.md) for a list of development tasks.
+
+### General Approach
 
 The approach uses a top view in OpenSCAD with all of the dimensioned lines and text on the xy plane. Combing multiple views of your object in various projections and translations with dimensioned lines overlayed on a plane just above your object will give the illusion of a dimensioned drawing.
 
