@@ -20,10 +20,9 @@ The library includes a partial implementation of these features, making it funct
 
 To get started, explore the [documentation](docs/README.md) and the [examples](examples/README.md). Quick-start guides and further simplifications are planned for future releases.
 
-## Future Directions
+## Contributing
 
-- **Additional Symbols**: Expanding the library with more standardized symbols for engineering drawings.
-- **Improved Scaling**: Developing methods to better control image scaling and output resolution, including specifying viewports and setting pixels per inch.
+Contributions are welcome! Whether it's bug fixes, new features, or documentation improvements, your input helps make this project better. If you're interested in contributing, please check out the [TODO](docs/TODO.md) file for a list of development tasks and areas where help is needed. If you have suggestions or ideas that aren't listed, don't hesitate to open an issue to discuss them.
 
 ## Acknowledgements
 
