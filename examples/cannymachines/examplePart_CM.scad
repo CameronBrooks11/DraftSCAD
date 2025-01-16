@@ -17,9 +17,10 @@ cm_hole4_x_offset = 2.75;
 
 ZFITE = 0.01;
 
-module sample_part(length = cm_part_length, width = cm_part_width, height = cm_part_height, hole1_xoffset = cm_hole1_x_offset,
-                   hole_y1_offset = cm_hole_y1_offset, hole1_radius = cm_hole1_radius, hole2_xoffset = cm_hole2_x_offset,
-                   hole3_xoffset = cm_hole3_x_offset, hole4_xoffset = cm_hole4_x_offset, hole_y2_offset = cm_hole_y2_offset,
+module sample_part(length = cm_part_length, width = cm_part_width, height = cm_part_height,
+                   hole1_xoffset = cm_hole1_x_offset, hole_y1_offset = cm_hole_y1_offset,
+                   hole1_radius = cm_hole1_radius, hole2_xoffset = cm_hole2_x_offset, hole3_xoffset = cm_hole3_x_offset,
+                   hole4_xoffset = cm_hole4_x_offset, hole_y2_offset = cm_hole_y2_offset,
                    hole2_radius = cm_hole2_radius)
 {
     difference()
@@ -43,4 +44,3 @@ module sample_part(length = cm_part_length, width = cm_part_width, height = cm_p
             cylinder(h = height * 2 + ZFITE, r = hole2_radius, center = false, $fn = 100);
     }
 }
-

@@ -1,15 +1,7 @@
-/* sample_part1.scad
- *
- * This is a sample to illustrate the use of the
- * dimlines.scad program for creating dimension lines in OpenSCAD.
- *
- * Upon runing this program, select ctrl-4 (top view) to see the dimensioning.
- *
- * More on this can be found at http://CannyMachines.com
- * created by Don Smiley
- */
+include <example_CM_config.scad>;
+
+include <../../ddtemplates.scad>;
 include <../../dimdraft.scad>;
-use <../../ddtemplates.scad>;
 
 // views of the part
 use <exampleView1_CM.scad>;
@@ -17,19 +9,17 @@ use <exampleView2_CM.scad>;
 use <exampleView3_CM.scad>;
 use <exampleView4_CM.scad>;
 
-DOC_HEIGHT = 2;
-
 view1Pos = [ 3, 7, 0 ];
-translate(view1Pos) exampleView1_CM(DOC_HEIGHT);
+translate(view1Pos) exampleView1_CM();
 
 view2Pos = [ 3, 5, 0 ];
-translate(view2Pos) exampleView2_CM(DOC_HEIGHT);
+translate(view2Pos) exampleView2_CM();
 
 view3Pos = [ 13, 5 + 0.15, 0 ];
-translate(view3Pos) exampleView3_CM(DOC_HEIGHT);
+translate(view3Pos) exampleView3_CM();
 
 view4Pos = [ 10, 8.5, 0 ];
-translate(view4Pos) exampleView4_CM(DOC_HEIGHT);
+translate(view4Pos) exampleView4_CM();
 
 // aspects of the part
 part_details = [
@@ -74,6 +64,6 @@ grid_space = 0.5;
 translate([ 0, 0, -DIM_LINE_WIDTH ])
     draw_sheet(length = sheet_len, height = sheet_height, grid_type = "Dot", grid_dim = 0.5);
 
-color("black") translate([ grid_space * 10, grid_space * 1.5, 0 ])
+color(DEF_TEXT_COLOR) translate([ grid_space * 10, grid_space * 1.5, 0 ])
     text(text = str("Grid Scale: ", grid_space, " mm"), size = grid_space / 2, valign = "center", halign = "left",
          font = "Liberation Sans:style=Bold Italic");

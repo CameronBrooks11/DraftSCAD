@@ -1,104 +1,91 @@
 include <../../dimdraft.scad>;
 
-module sample_lines(){
+module sample_lines()
+{
+    spacing = 0.5;
+
     // sample lines
-    union() {
-        line(length=2, width=DIM_LINE_WIDTH, height=DIM_HEIGHT,
-            left_arrow=false, right_arrow=false);
-        translate([0, -0.25, 0])
-        line(length=2, width=DIM_LINE_WIDTH, height=DIM_HEIGHT, left_arrow=true,
-            right_arrow=false);
-        translate([0, -0.5, 0])
-        line(length=2, width=DIM_LINE_WIDTH, height=DIM_HEIGHT,
-            left_arrow=false, right_arrow=true);
-        translate([0, -0.75, 0])
-        line(length=2, width=DIM_LINE_WIDTH, height=DIM_HEIGHT, left_arrow=true,
-            right_arrow=true);
+    union()
+    {
+        translate([ 1, spacing, 0 ]) line(length = 2);
+        translate([ 1, spacing * 2, 0 ]) line(length = 2, left_arrow = true);
+        translate([ 1, spacing * 3, 0 ]) line(length = 2, right_arrow = true);
+        translate([ 1, spacing * 4, 0 ]) line(length = 2, left_arrow = true, right_arrow = true);
     }
-} 
+}
 
-module sample_dimensions() {
-
-    /* shows all possibilities
-        DIM_CENTER = 0;
-        DIM_LEFT = 1;
-        DIM_RIGHT = 2;
-        DIM_OUTSIDE = 3;
-    */
+module sample_dimensions()
+{
 
     length = 2.5;
 
     // The following two lines are vertical lines that bracket the dimensions
     // left arrow
-    translate([0, -1.75, 0])
-    rotate([0, 0, 90])
-    line(length=length, width=DIM_LINE_WIDTH, height=DIM_HEIGHT,
-         left_arrow=false, right_arrow=false);
+    line(length = length, vert = true);
 
     // right arrow
-    translate([length, -1.75, 0])
-    rotate([0, 0, 90])
-    line(length=length, width=DIM_LINE_WIDTH, height=DIM_HEIGHT,
-         left_arrow=false, right_arrow=false);
+    translate([ length, 0, 0 ]) line(length = length, vert = true);
 
-    //  The following runs through all the dimension types
-    for (i = [0:4]) {
-        translate([0, -.5 * i, 0])
-        dimensions(length=length, line_width=DIM_LINE_WIDTH, loc=i);
+    // The following runs through all the dimension location types
+    // DIM_CENTER = 0;
+    // DIM_LEFT = 1;
+    // DIM_RIGHT = 2;
+    // DIM_OUTSIDE = 3;
+    for (i = [0:3])
+    {
+        translate([ 0, 0.5 * i + length / 4, 0 ]) dimensions(length = length, loc = i);
     }
 }
 
-module sample_leaderlines() {
+module sample_leaderlines()
+{
+    radius = 0.5;
 
-    radius = .25;
-    for (i = [0:6]) {
-        leader_line(angle=i * 15, radius=.25, angle_length=(i * .25),
-                    horz_line_length=.5, direction=DIM_RIGHT,
-                    line_width=DIM_LINE_WIDTH,
-                    text=str("leader line angle: ", i * 15 + 90),
-                    do_circle=false
-                   );
+    // Leader lines around the top left
+    for (i = [0:6])
+    {
+        a = i * 15;                        // angle spacing pattern
+        t = str("leader line angle: ", a); // label string
+        leader_line(angle = a, radius = radius, angle_length = (i * .25), horz_length = 0.5, direction = DIM_RIGHT,
+                    text = t, do_circle = false);
     }
 
-    for (i = [1:7]) {
-        leader_line(angle=i * 20 + 90, radius=.25,
-                    angle_length=.75,
-                    horz_line_length=.5, direction=DIM_LEFT,
-                    line_width=DIM_LINE_WIDTH,
-                    text=str("leader line angle: ", i * 20 + 90));
+    // Leader lines around the right side
+    for (i = [1:7])
+    {
+        a = i * 25 + 80;                   // angle spacing pattern
+        t = str("leader line angle: ", a); // label string
+        leader_line(angle = a, radius = radius, angle_length = 0.75, horz_length = 0.5, direction = DIM_LEFT, text = t);
     }
-    for (i = [1:4]) {
-        leader_line(angle=-i * 20, radius=.25, angle_length=1.5,
-                    horz_line_length=.25, direction=DIM_RIGHT,
-                    line_width=DIM_LINE_WIDTH,
-                    text=str(i),
-                    do_circle=true
-                   );
+
+    // Leader lines around the bottom right
+    for (i = [1:4])
+    {
+        a = -i * 20; // angle spacing pattern
+        t = str(i);  // label string
+        leader_line(angle = a, radius = radius, angle_length = 1.5, horz_length = 0.25, direction = DIM_RIGHT, text = t,
+                    do_circle = true);
     }
- }
-
-module sample_circlecenter() {
-
-    radius = .25;
-    difference() {
-        cube([1, 1, 1], center=true);
-        cylinder(h=1.1, r=radius, center=true, $fn=100);
-    }
-    color("Black")
-    translate([0, 0, .51])
-    circle_center(radius=radius, size=DIM_HOLE_CENTER,
-        line_width=DIM_LINE_WIDTH);
-
 }
 
-// uncomment these to sample
-sample_lines();
+module sample_circlecenter()
+{
 
-translate([-5.5, 0, 0])
-sample_dimensions();
+    radius = 0.5;
 
-translate([4, 0, 0])
-sample_circlecenter();
+    // Sample part
+    difference()
+    {
+        cube([ radius * 4, radius * 4, 1 ], center = true);
+        cylinder(h = 2, r = radius, center = true, $fn = 100);
+    }
 
-translate([-2, 3, 0])
-sample_leaderlines();
+    // Sample circle center
+    translate([ 0, 0, 0.5 ]) circle_center(radius);
+}
+
+// Display the samples
+translate([ 0.5, 1, 0 ]) sample_lines();
+translate([ 8, 1, 0 ]) sample_dimensions();
+translate([ 2.5, 6, 0 ]) sample_circlecenter();
+translate([ 9, 6, 0 ]) sample_leaderlines();

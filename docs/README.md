@@ -1,4 +1,8 @@
+# Docs
+
 ### General Approach
+
+_Note: This is out of date and needs a serious rework, in the current state it is a better reflection of what the library used to be._
 
 The approach uses a top view in OpenSCAD with all of the dimensioned lines and text on the xy plane. Combing multiple views of your object in various projections and translations with dimensioned lines overlayed on a plane just above your object will give the illusion of a dimensioned drawing.
 
@@ -22,20 +26,16 @@ The default orientation is a horizontal line along the x axis. Therefore, any ot
 
 ```
 // A sample used to create the image above.
-line(length=2, width=DIM_LINE_WIDTH, height=DIM_HEIGHT,
-    left_arrow=false, right_arrow=false);
+line(length=2);
 
 translate([0, -0.25, 0])
-line(length=2, width=DIM_LINE_WIDTH, height=DIM_HEIGHT, left_arrow=true,
-    right_arrow=false);
+line(length=2,);
 
 translate([0, -0.5, 0])
-line(length=2, width=DIM_LINE_WIDTH, height=DIM_HEIGHT,
-    left_arrow=false, right_arrow=true);
+line(length=2);
 
 translate([0, -0.75, 0])
-line(length=2, width=DIM_LINE_WIDTH, height=DIM_HEIGHT, left_arrow=true,
-    right_arrow=true);
+line(length=2);
 ```
 
 There is also a module, arrow, which is used to create the arrow, but it is unlikely you would use it isolation.
@@ -64,19 +64,17 @@ length = 2.5;
 // left arrow
 translate([0, -1.75, 0])
 rotate([0, 0, 90])
-line(length=length, width=DIM_LINE_WIDTH, height=DIM_HEIGHT,
-     left_arrow=false, right_arrow=false);
+line(length=length);
 
 // right arrow
 translate([length, -1.75, 0])
 rotate([0, 0, 90])
-line(length=length, width=DIM_LINE_WIDTH, height=DIM_HEIGHT,
-     left_arrow=false, right_arrow=false);
+line(length=length);
 
 //  The following runs through all the dimension types
 for (i = [0:4]) {
     translate([0, -.5 * i, 0])
-    dimensions(length=length, line_width=DIM_LINE_WIDTH, loc=i);
+    dimensions(length=length, loc=i);
 }
 ```
 
@@ -102,8 +100,7 @@ difference() {
 
 color(BLACK)
 translate([0, 0, .51])
-circle_center(radius=radius, size=DIM_HOLE_CENTER,
-    line_width=DIM_LINE_WIDTH);
+circle_center(radius=radius);
 ```
 
 The dimension lines that partially extend over an object will be set by you as according to your taste. I have viewed documentation where a line to hole extends clear across an object, or just extends slightly over its edge. So, this function will does not attempt to handle any of that. That can be done via appropriate use of the line module.
@@ -119,11 +116,11 @@ Another use of a leader line arises when pointing out the name of an object when
 A leader line in the program has several elements. There is a line with an arrow that is typically at an angle. That line is then met by a horizontal line extending to either the right or left. Text on the end, signifies either dimensions or a number indexed to a table in the title block for the part being referenced.
 
 ```
-leader_line(angle, radius, angle_length, horz_line_length,
+leader_line(angle, radius, angle_length, horz_length,
             direction=DIM_RIGHT, line_width, text, do_circle=false)
 ```
 
-You would typically use this module after translating to the center of your hole or circle object, or item that you want to describe. If you are dimensioning a circle, then you would use the radius value to offset the arrow to the rim of the circle. In the case of a leader line to an object, you would set the radius to zero. The angle*length is the length of the arrow extending away at your chosen angle. The `horz_line_length` is the length once it bends to a horizontal line. The direction sets your preference for the horizontal line to extend to the right or left `(DIM_LEFT or DIM_RIGHT)`. The line_width is used if you wish to modify the weight of this particular leader line. *(In most cases, you would simply use the default value, DIM*LINE_WIDTH).* Then, you would pass through the text that corresponds to your dimensions or object number. Finally, if `do_circle` is `true`, a circle will be drawn around the text.
+You would typically use this module after translating to the center of your hole or circle object, or item that you want to describe. If you are dimensioning a circle, then you would use the radius value to offset the arrow to the rim of the circle. In the case of a leader line to an object, you would set the radius to zero. The angle*length is the length of the arrow extending away at your chosen angle. The `horz_length` is the length once it bends to a horizontal line. The direction sets your preference for the horizontal line to extend to the right or left `(DIM_LEFT or DIM_RIGHT)`. The line_width is used if you wish to modify the weight of this particular leader line. *(In most cases, you would simply use the default value, DIM*LINE_WIDTH).* Then, you would pass through the text that corresponds to your dimensions or object number. Finally, if `do_circle` is `true`, a circle will be drawn around the text.
 
 The following shows a varied use of the parameters, and generated the `leader_line` image shown above.
 
@@ -131,8 +128,8 @@ The following shows a varied use of the parameters, and generated the `leader_li
 radius = .25;
 for (i = [0:6]) {
     leader_line(angle=i * 15, radius=.25, angle_length=(i * .25),
-                horz_line_length=.5, direction=DIM_RIGHT,
-                line_width=DIM_LINE_WIDTH,
+                horz_length=.5, direction=DIM_RIGHT,
+               
                 text=str("leader line angle: ", i * 15 + 90),
                 do_circle=false
                );
@@ -141,14 +138,14 @@ for (i = [0:6]) {
 for (i = [1:7]) {
     leader_line(angle=i * 20 + 90, radius=.25,
                 angle_length=.75,
-                horz_line_length=.5, direction=DIM_LEFT,
-                line_width=DIM_LINE_WIDTH,
+                horz_length=.5, direction=DIM_LEFT,
+               
                 text=str("leader line angle: ", i * 20 + 90));
 }
 for (i = [1:4]) {
     leader_line(angle=-i * 20, radius=.25, angle_length=1.5,
-                horz_line_length=.25, direction=DIM_RIGHT,
-                line_width=DIM_LINE_WIDTH,
+                horz_length=.25, direction=DIM_RIGHT,
+               
                 text=str(i),
                 do_circle=true
                );

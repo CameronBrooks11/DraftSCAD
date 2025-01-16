@@ -1,20 +1,28 @@
+/**
+ * @file dd_sheet.scad
+ * @brief Functions for drawing sheets from standard sizes and grid patterns.
+ * @details This file contains functions for drawing sheets with standard sizes and grid patterns. The draw_sheet
+ * function can draw a sheet boundary based on given dimensions or a standard sheet symbol with a grid or dot pattern.
+ * @copyright (c) 2025 Cameron K. Brooks, (c) 2021 Don Smiley
+ */
+
 include <../drawing_sheet_sizes.scad>;
 
-module draw_sheet(length = undef, height = undef, sheet_symbol = undef, line_width = DIM_LINE_WIDTH * 2,
-                  grid_type = "None", grid_dim = DIM_GRID_SPACING, grid_line_width = DIM_LINE_WIDTH, color = "black")
+/*
+ * draw_sheet(length, height, sheet_symbol, grid_type, line_width, color)
+ * Draws a sheet boundary based on given dimensions or a standard sheet symbol and adds a grid or dot pattern if
+ * specified. Parameters:
+ * - length: Length of the sheet (overridden if sheet_symbol is provided).
+ * - height: Height of the sheet (overridden if sheet_symbol is provided).
+ * - sheet_symbol: Standard sheet size identifier (e.g., "A4", "ANSI_B").
+ * - grid_type: "None", "Dot", or "Grid" to specify the background pattern.
+ * - line_width: Thickness of the sheet boundary lines.
+ * - color: Optional parameter to set the frame's color.
+ */
+module draw_sheet(length = undef, height = undef, sheet_symbol = undef, line_width = DIM_LINE_WIDTH * 2, line_height = DIM_LINE_HEIGHT,
+                  grid_type = "None", grid_dim = DIM_GRID_SPACING, grid_line_width = DIM_LINE_WIDTH,
+                  color = DEF_LINE_COLOR)
 {
-    /*
-     * draw_sheet(length, height, sheet_symbol, grid_type, line_width, color)
-     * Draws a sheet boundary based on given dimensions or a standard sheet symbol and adds a grid or dot pattern if
-     * specified. Parameters:
-     * - length: Length of the sheet (overridden if sheet_symbol is provided).
-     * - height: Height of the sheet (overridden if sheet_symbol is provided).
-     * - sheet_symbol: Standard sheet size identifier (e.g., "A4", "ANSI_B").
-     * - grid_type: "None", "Dot", or "Grid" to specify the background pattern.
-     * - line_width: Thickness of the sheet boundary lines.
-     * - color: Optional parameter to set the frame's color.
-     */
-
     // If a sheet symbol is provided, override length and height using the sheet_sizes array
     if (!is_undef(sheet_symbol))
     {
@@ -37,7 +45,7 @@ module draw_sheet(length = undef, height = undef, sheet_symbol = undef, line_wid
     if (!is_undef(length) && !is_undef(height))
     {
         // Draw the grid or dots before drawing the frame to ensure it's in the background
-        draw_frame(length, height, line_width, color);
+        draw_frame(length, height, line_width, line_height, color);
         translate([ 0, 0, -DIM_LINE_WIDTH ])
             draw_grid(length, height, grid_type, grid_dim, grid_line_width, "lightgray");
     }
@@ -47,7 +55,7 @@ module draw_sheet(length = undef, height = undef, sheet_symbol = undef, line_wid
     }
 }
 
-module draw_frame(length, height, line_width = DIM_LINE_WIDTH, color = "black")
+module draw_frame(length, height, line_width = DIM_LINE_WIDTH, line_height = DIM_LINE_HEIGHT, color = DEF_LINE_COLOR)
 {
     /*
      * draw_frame(length, height, line_width, color)
@@ -63,23 +71,23 @@ module draw_frame(length, height, line_width = DIM_LINE_WIDTH, color = "black")
     color(color)
     {
         // Bottom horizontal line
-        line(length = length, width = line_width);
+        line(length = length, width = line_width, height = line_height);
 
         // Top horizontal line
-        translate([ 0, height, 0 ]) line(length = length, width = line_width);
+        translate([ 0, height, 0 ]) line(length = length, width = line_width, height = line_height);
 
         // Left vertical line
         translate([ line_width / 2, line_width / 2, 0 ]) rotate([ 0, 0, 90 ])
-            line(length = height - line_width, width = line_width);
+            line(length = height - line_width, width = line_width, height = line_height);
 
         // Right vertical line
         translate([ length - line_width / 2, line_width / 2, 0 ]) rotate([ 0, 0, 90 ])
-            line(length = height - line_width, width = line_width);
+            line(length = height - line_width, width = line_width, height = line_height);
     }
 }
 
 module draw_grid(length, height, type = "None", grid_spacing = DIM_GRID_SPACING, line_width = DIM_LINE_WIDTH / 2,
-                 color = "lightgray")
+                 line_height = DIM_LINE_HEIGHT, color = "lightgray")
 {
     /*
      * draw_grid(length, height, type, grid_spacing, line_width, color)
@@ -92,34 +100,29 @@ module draw_grid(length, height, type = "None", grid_spacing = DIM_GRID_SPACING,
      * - line_width: Thickness of grid lines (ignored for dots).
      * - color: Color of the grid lines or dots.
      */
-    echo("Drawing grid type: ", type);
 
     if (type == "Grid")
     {
-        echo("Drawing Grid with spacing: ", grid_spacing);
         color(color)
         {
             // Draw vertical grid lines
             for (x = [0:grid_spacing:length])
             {
-                echo("Drawing vertical line at x = ", x);
                 translate([ x, 0, 0 ]) rotate([ 0, 0, 90 ]) // Rotate to vertical
-                    line(length = height, width = line_width, height = DIM_HEIGHT, left_arrow = false,
+                    line(length = height, width = line_width, height = line_height, left_arrow = false,
                          right_arrow = false);
             }
 
             // Draw horizontal grid lines
             for (y = [0:grid_spacing:height])
             {
-                echo("Drawing horizontal line at y = ", y);
-                translate([ 0, y, 0 ]) line(length = length, width = line_width, height = DIM_HEIGHT,
+                translate([ 0, y, 0 ]) line(length = length, width = line_width, height = line_height,
                                             left_arrow = false, right_arrow = false);
             }
         }
     }
     else if (type == "Dot")
     {
-        echo("Drawing Dots with spacing: ", grid_spacing);
         color(color)
         {
             // Define dot size
@@ -129,7 +132,6 @@ module draw_grid(length, height, type = "None", grid_spacing = DIM_GRID_SPACING,
             {
                 for (y = [0:grid_spacing:height])
                 {
-                    echo("Drawing dot at (", x, ", ", y, ")");
                     translate([ x, y, 0 ]) sphere(r = dot_size, $fn = 12);
                 }
             }

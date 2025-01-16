@@ -1,14 +1,11 @@
-SCALING_FACTOR = 100;
-
-include <../../dimdraft.scad>;
-include <examplePart_DS.scad>;
+include <example_DS_config.scad>;
 
 include <../../ddtemplates.scad>;
-include <exampleView1_DS.scad>;
-include <exampleView2_DS.scad>;
-include <exampleView3_DS.scad>;
+include <../../dimdraft.scad>;
 
-DOC_HEIGHT = 250;
+use <exampleView1_DS.scad>;
+use <exampleView2_DS.scad>;
+use <exampleView3_DS.scad>;
 
 translate([ 500, 800, 0 ]) exampleView1_DS();
 
@@ -23,6 +20,6 @@ translate([ 0, 0, DOC_HEIGHT - DIM_LINE_WIDTH ])
 
 translate([ 875, 254, DOC_HEIGHT ]) titleblock1();
 
-color("black") translate([ DIM_GRID_SPACING * 6, DIM_GRID_SPACING * 1.5, 0 ])
+color(DEF_TEXT_COLOR) translate([ DIM_GRID_SPACING * 6, DIM_GRID_SPACING * 1.5, 0 ])
     text(text = str("Grid Scale: ", DIM_GRID_SPACING, " mm"), size = 20, valign = "center", halign = "left",
          font = "Liberation Sans:style=Bold Italic");

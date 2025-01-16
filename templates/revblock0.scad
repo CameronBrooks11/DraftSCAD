@@ -1,5 +1,22 @@
+/**
+@file revblock0.scad
+@brief A revision block for drawing sheets.
+@copyright (c) 2021 Don Smiley, (c) 2025 Cameron K. Brooks
+*/
+
 include <../dimdraft.scad>;
 
+/*
+ * revblock0(revisions, fill)
+    * Creates a revision block for a drawing sheet.
+    * Parameters:
+    * - revisions: Array of revision details with format:
+    *           [[rev, date, initials], ...]
+    * - fill: Boolean to fill the revision block with white (default: true).
+    * Behavior:
+    * - Draws a revision block with headings and revision details.
+    * - Fills the block with white if fill is true.
+    */
 module revblock0(revisions, fill = true)
 {
     DIM_FONTSCALE = DIM_LINE_WIDTH * .7;
@@ -44,10 +61,14 @@ module revblock0(revisions, fill = true)
                                                                  DIM_HORZ, revisions[rev][col], desc_size]];
 
     titleblock(lines, descs, details);
-    if(fill) {
-        color("white") {
-            translate([ 0, -row_height * (2 + n_revisions) * DIM_LINE_WIDTH, -DIM_LINE_WIDTH])
-                cube([revision_width * DIM_LINE_WIDTH + DIM_LINE_WIDTH, row_height * (2 + n_revisions) * DIM_LINE_WIDTH, DIM_LINE_WIDTH]);
+    if (fill)
+    {
+        color("white")
+        {
+            translate([ 0, -row_height * (2 + n_revisions) * DIM_LINE_WIDTH, -DIM_LINE_WIDTH ]) cube([
+                revision_width * DIM_LINE_WIDTH + DIM_LINE_WIDTH, row_height * (2 + n_revisions) * DIM_LINE_WIDTH,
+                DIM_LINE_WIDTH
+            ]);
         }
     }
 }

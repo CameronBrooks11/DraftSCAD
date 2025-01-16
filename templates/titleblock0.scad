@@ -1,5 +1,26 @@
+/**
+*@file titleblock0.scad
+*@brief A title block for drawing sheets.
+*@copyright (c) 2021 Don Smiley, (c) 2025 Cameron K. Brooks
+*/
+
 include <../dimdraft.scad>;
 
+/*
+ * titleblock0(part_details, doc_details, org_details, fill)
+ * Creates a title block for a drawing sheet.
+ * Parameters:
+ * - part_details: Array of part details with format:
+ *           [material, finish, weight, part_no]
+ * - doc_details: Array of document details with format:
+ *           [drawing_no, created_by, reviewed_by, date_of_issue]
+ * - org_details: Array of organization details with format:
+ *           [company_name, address, phone]
+ * - fill: Boolean to fill the title block with white (default: true).
+ * Behavior:
+ * - Draws a title block with headings and part, document, and organization details.
+ * - Fills the block with white if fill is true.
+ */
 module titleblock0(part_details, doc_details, org_details, fill = "true")
 {
 
@@ -88,55 +109,3 @@ module titleblock0(part_details, doc_details, org_details, fill = "true")
     }
 }
 
-module sample_revisionblock()
-{
-    revisions = [
-        [ "1a", "2013-4-1", "ds" ],
-        [ "1b", "2013-4-2", "ds" ],
-        [ "2a", "2013-4-3", "ds" ],
-        [ "3a", "2013-4-5", "ds" ],
-        [ "4a", "2013-4-15", "ds" ],
-    ];
-    
-    DIM_FONTSCALE = DIM_LINE_WIDTH * .7;
-
-    // revision block headings
-    row_height = 15;
-    revision_width = 120;
-    desc_x = 2;
-    desc_y = -10;
-    desc_size = 1;
-
-    cols = [ 0, 30, 80, revision_width ];
-    rows = [ 0, -row_height, -row_height * 2 ];
-
-    // draw
-    lines = [
-        // horizontal lines
-        [ cols[0], rows[0], DIM_HORZ, revision_width, 1 ],
-        [ cols[0], rows[1], DIM_HORZ, revision_width, 1 ],
-        [ cols[0], rows[2], DIM_HORZ, revision_width, 1 ],
-
-        // vertical lines
-        [ cols[0], rows[0], DIM_VERT, row_height * 2, 1 ],
-        [ cols[1], rows[1], DIM_VERT, row_height, 1 ],
-        [ cols[2], rows[1], DIM_VERT, row_height, 1 ],
-        [ cols[3], rows[0], DIM_VERT, row_height * 2, 1 ],
-    ];
-
-    descs = [
-        [ cols[0] + desc_x, rows[1] + desc_y, DIM_HORZ, "Rev.", desc_size ],
-        [ cols[1] + desc_x, rows[1] + desc_y, DIM_HORZ, "Date", desc_size ],
-        [ cols[2] + desc_x, rows[1] + desc_y, DIM_HORZ, "Initials", desc_size ],
-        [ cols[1] + desc_x, rows[0] + desc_y, DIM_HORZ, "Revisions", desc_size ],
-    ];
-
-    details = [
-        [ cols[0] + desc_x, rows[2] + desc_y, DIM_HORZ, revisions[0][0], desc_size ],
-        [ cols[1] + desc_x, rows[2] + desc_y, DIM_HORZ, revisions[0][1], desc_size ],
-        [ cols[2] + desc_x, rows[2] + desc_y, DIM_HORZ, revisions[0][2], desc_size ],
-    ];
-    num_revisions = len(revisions);
-
-    titleblock(lines, descs, details);
-}

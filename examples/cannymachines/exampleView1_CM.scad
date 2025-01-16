@@ -1,3 +1,5 @@
+include <example_CM_config.scad>;
+
 include <../../dimdraft.scad>;
 include <examplePart_CM.scad>;
 
@@ -5,42 +7,36 @@ module evqcm_Xdims()
 {
     union()
     {
-        translate([ 0, cm_part_width + DIM_SPACE * 3, 0 ])
-            dimensions(cm_hole1_x_offset, DIM_LINE_WIDTH, loc = DIM_OUTSIDE);
+        translate([ 0, cm_part_width + DIM_SPACE * 3, 0 ]) dimensions(cm_hole1_x_offset, loc = DIM_OUTSIDE);
 
-        translate([ 0, cm_part_width + DIM_SPACE * 6, 0 ]) dimensions(cm_hole2_x_offset, DIM_LINE_WIDTH);
+        translate([ 0, cm_part_width + DIM_SPACE * 6, 0 ]) dimensions(cm_hole2_x_offset);
 
-        translate([ 0, cm_part_width + DIM_SPACE * 9, 0 ]) dimensions(cm_hole3_x_offset, DIM_LINE_WIDTH);
+        translate([ 0, cm_part_width + DIM_SPACE * 9, 0 ]) dimensions(cm_hole3_x_offset);
 
-        translate([ 0, cm_part_width + DIM_SPACE * 12, 0 ]) dimensions(cm_hole4_x_offset, DIM_LINE_WIDTH);
+        translate([ 0, cm_part_width + DIM_SPACE * 12, 0 ]) dimensions(cm_hole4_x_offset);
 
-        translate([ 0, cm_part_width + DIM_SPACE * 15, 0 ]) dimensions(cm_part_length, DIM_LINE_WIDTH);
+        translate([ 0, cm_part_width + DIM_SPACE * 15, 0 ]) dimensions(cm_part_length);
 
         // extension lines
-        rotate([ 0, 0, 90 ]) union()
-        {
-            translate([ cm_part_width + DIM_SPACE, 0, 0 ]) line(length = DIM_SPACE * 17, width = DIM_LINE_WIDTH,
-                                                                height = .01, left_arrow = false, right_arrow = false);
 
-            translate([ cm_part_width + DIM_SPACE, -cm_part_length, 0 ]) line(
-                length = DIM_SPACE * 17, width = DIM_LINE_WIDTH, height = .01, left_arrow = false, right_arrow = false);
+        union()
+        {
+            translate([ 0, cm_part_width + DIM_SPACE, 0 ]) line(length = DIM_SPACE * 17, vert = true);
+
+            translate([ cm_part_length, cm_part_width + DIM_SPACE, 0 ]) line(length = DIM_SPACE * 17, vert = true);
 
             // extension lines for holes
-            translate([ cm_part_width - .4, -cm_hole1_x_offset, 0 ])
-                line(length = cm_part_width - cm_hole_y1_offset, width = DIM_LINE_WIDTH, height = .01,
-                     left_arrow = false, right_arrow = false);
+            translate([ cm_hole1_x_offset, cm_part_width - .4, 0 ])
+                line(length = cm_part_width - cm_hole_y1_offset + DIM_SPACE * 0, vert = true);
 
-            translate([ cm_part_width - .4, -cm_hole2_x_offset, 0 ])
-                line(length = cm_part_width - cm_hole_y1_offset + DIM_SPACE * 3, width = DIM_LINE_WIDTH, height = .01,
-                     left_arrow = false, right_arrow = false);
+            translate([ cm_hole2_x_offset, cm_part_width - .4, 0 ])
+                line(length = cm_part_width - cm_hole_y1_offset + DIM_SPACE * 3, vert = true);
 
-            translate([ cm_part_width - .2, -cm_hole3_x_offset, 0 ])
-                line(length = cm_part_width - cm_hole_y2_offset + DIM_SPACE * 7, width = DIM_LINE_WIDTH, height = .01,
-                     left_arrow = false, right_arrow = false);
+            translate([ cm_hole3_x_offset, cm_part_width - .2, 0 ])
+                line(length = cm_part_width - cm_hole_y2_offset + DIM_SPACE * 7, vert = true);
 
-            translate([ cm_part_width - .2, -cm_hole4_x_offset, 0 ])
-                line(length = cm_part_width - cm_hole_y2_offset + DIM_SPACE * 10, width = DIM_LINE_WIDTH, height = .01,
-                     left_arrow = false, right_arrow = false);
+            translate([ cm_hole4_x_offset, cm_part_width - .2, 0 ])
+                line(length = cm_part_width - cm_hole_y2_offset + DIM_SPACE * 10, vert = true);
         }
     }
 }
@@ -52,29 +48,22 @@ module ev1cm_Ydims()
         rotate([ 0, 0, -90 ])
         {
 
-            translate([ -cm_hole_y1_offset, cm_part_length + DIM_SPACE * 3, DIM_HEIGHT ])
-                dimensions(cm_hole_y1_offset, DIM_LINE_WIDTH);
+            translate([ -cm_hole_y1_offset, cm_part_length + DIM_SPACE * 3, 0 ]) dimensions(length = cm_hole_y1_offset);
 
-            translate([ -cm_hole_y2_offset, cm_part_length + DIM_SPACE * 6, DIM_HEIGHT ])
-                dimensions(cm_hole_y2_offset, DIM_LINE_WIDTH);
+            translate([ -cm_hole_y2_offset, cm_part_length + DIM_SPACE * 6, 0 ]) dimensions(length = cm_hole_y2_offset);
 
-            translate([ -cm_part_width, cm_part_length + DIM_SPACE * 9, DIM_HEIGHT ])
-                dimensions(cm_part_width, DIM_LINE_WIDTH);
+            translate([ -cm_part_width, cm_part_length + DIM_SPACE * 9, 0 ]) dimensions(length = cm_part_width);
         }
 
         // extension lines
 
-        translate([ cm_part_length + DIM_SPACE, cm_part_width, DIM_HEIGHT ])
-            line(length = 1, width = DIM_LINE_WIDTH, height = .01, left_arrow = false, right_arrow = false);
+        translate([ cm_part_length + DIM_SPACE, cm_part_width, 0 ]) line(length = 1);
 
-        translate([ cm_part_length - DIM_SPACE * 4, cm_hole_y1_offset, DIM_HEIGHT ])
-            line(length = DIM_SPACE * 8, width = DIM_LINE_WIDTH, height = .01, left_arrow = false, right_arrow = false);
+        translate([ cm_part_length - DIM_SPACE * 4, cm_hole_y1_offset, 0 ]) line(length = DIM_SPACE * 8);
 
-        translate([ cm_part_length - DIM_SPACE * 4, cm_hole_y2_offset, DIM_HEIGHT ]) line(
-            length = DIM_SPACE * 11, width = DIM_LINE_WIDTH, height = .01, left_arrow = false, right_arrow = false);
+        translate([ cm_part_length - DIM_SPACE * 4, cm_hole_y2_offset, 0 ]) line(length = DIM_SPACE * 11);
 
-        translate([ cm_part_length + DIM_SPACE, 0, DIM_HEIGHT ])
-            line(length = 1, width = DIM_LINE_WIDTH, height = .01, left_arrow = false, right_arrow = false);
+        translate([ cm_part_length + DIM_SPACE, 0, 0 ]) line(length = 1);
     }
 }
 
@@ -83,20 +72,18 @@ module ev1cm_holepair1()
 
     union()
     {
-        translate([ cm_hole1_x_offset, cm_hole_y1_offset, DIM_HEIGHT ])
-            circle_center(cm_hole1_radius, DIM_HOLE_CENTER, DIM_LINE_WIDTH);
+        translate([ cm_hole1_x_offset, cm_hole_y1_offset, 0 ]) circle_center(cm_hole1_radius);
 
-        translate([ cm_hole2_x_offset, cm_hole_y1_offset, DIM_HEIGHT ])
-            circle_center(cm_hole1_radius, DIM_HOLE_CENTER, DIM_LINE_WIDTH);
+        translate([ cm_hole2_x_offset, cm_hole_y1_offset, 0 ]) circle_center(cm_hole1_radius);
     }
 
     leader1_text = str("2X 0 ", cm_hole1_radius * 2);
 
     union()
     {
-        translate([ cm_hole1_x_offset, cm_hole_y1_offset, DIM_HEIGHT ])
-            leader_line(angle = -70, radius = cm_hole1_radius, angle_length = DIM_SPACE * 12, horz_line_length = .25,
-                        line_width = DIM_LINE_WIDTH, text = leader1_text);
+        translate([ cm_hole1_x_offset, cm_hole_y1_offset, 0 ])
+            leader_line(angle = -70, radius = cm_hole1_radius, angle_length = DIM_SPACE * 12, horz_length = .25,
+                        text = leader1_text);
     }
 }
 
@@ -106,11 +93,9 @@ module ev1cm_holepair2()
     union()
     {
 
-        translate([ cm_hole3_x_offset, cm_hole_y2_offset, DIM_HEIGHT ])
-            circle_center(cm_hole2_radius, DIM_HOLE_CENTER, DIM_LINE_WIDTH);
+        translate([ cm_hole3_x_offset, cm_hole_y2_offset, 0 ]) circle_center(cm_hole2_radius);
 
-        translate([ cm_hole4_x_offset, cm_hole_y2_offset, DIM_HEIGHT ])
-            circle_center(cm_hole2_radius, DIM_HOLE_CENTER, DIM_LINE_WIDTH);
+        translate([ cm_hole4_x_offset, cm_hole_y2_offset, 0 ]) circle_center(cm_hole2_radius);
     }
 
     // leader line for holes
@@ -118,9 +103,9 @@ module ev1cm_holepair2()
     union()
     {
 
-        translate([ cm_hole3_x_offset, cm_hole_y2_offset, DIM_HEIGHT ])
-            leader_line(angle = -70, radius = cm_hole2_radius, angle_length = DIM_SPACE * 15.5, horz_line_length = .25,
-                        line_width = DIM_LINE_WIDTH, text = leader2_text);
+        translate([ cm_hole3_x_offset, cm_hole_y2_offset, 0 ])
+            leader_line(angle = -70, radius = cm_hole2_radius, angle_length = DIM_SPACE * 15.5, horz_length = .25,
+                        text = leader2_text);
     }
 }
 
