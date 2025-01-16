@@ -8,3 +8,4 @@ This should eventually be separated into distinct issues with clear details for 
 - Full documentation of the library to replace legacy write up in the docs folder
   - include an API reference on main README
   - include a short explanation of the intended workflow in terms of creating a part then documenting it using this lib
+- Predefined engineering symbols (GD&T)
