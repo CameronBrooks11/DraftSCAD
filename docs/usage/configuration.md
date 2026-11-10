@@ -6,7 +6,7 @@ nav_order: 2
 
 # Configuration
 
-The library reads six variables when it is included. Set the ones you want **before** the include line. A value
+The library reads the variables below when it is included. Set the ones you want **before** the include line. A value
 assigned after the include is ignored.
 
 ```scad
@@ -21,6 +21,7 @@ include <DraftSCAD/dimdraft.scad>
 | `LINE_WIDTH`     | `0.025 * SCALING_FACTOR`   | `DIM_LINE_WIDTH`, the width of every line      |
 | `HEIGHT`         | `0.01 * SCALING_FACTOR`    | `DIM_LINE_HEIGHT`, the Z thickness of lines    |
 | `SPACE`          | `0.1 * SCALING_FACTOR`     | `DIM_SPACE`, the spacing unit                  |
+| `TEXT_SIZE`      | `7 * DIM_LINE_WIDTH`       | `DIM_TEXT_SIZE`, the height of label text      |
 | `LINE_COLOR`     | `"black"`                  | `DEF_LINE_COLOR`                               |
 | `TEXT_COLOR`     | `"black"`                  | `DEF_TEXT_COLOR`                               |
 
@@ -29,15 +30,32 @@ something else, the library will pick that value up.
 
 ## What follows from line width
 
-Everything else is derived from `DIM_LINE_WIDTH`.
+Unless you set `TEXT_SIZE`, everything else is derived from `DIM_LINE_WIDTH`.
 
 | Constant           | Value                  | Meaning                                         |
 | ------------------ | ---------------------- | ----------------------------------------------- |
-| `DIM_FONTSCALE`    | `DIM_LINE_WIDTH * 0.7` | Scale applied to all text                       |
+| `DIM_TEXT_SIZE`    | `DIM_LINE_WIDTH * 7`   | Height of label text                            |
+| `DIM_FONTSCALE`    | `DIM_TEXT_SIZE / 10`   | Scale applied to label text                     |
 | `DIM_HOLE_CENTER`  | `DIM_LINE_WIDTH * 6`   | Length of the marks drawn by `circle_center()`  |
 
-Text is drawn with OpenSCAD's default size of 10 and then scaled by `DIM_FONTSCALE`, so its height is 7 line widths.
-There is no separate text size setting.
+Text is drawn with OpenSCAD's default size of 10 and then scaled by `DIM_FONTSCALE`, so by default its height is 7
+line widths.
+
+## Text size
+
+Set `TEXT_SIZE` to size the text on its own, without changing the lines:
+
+```scad
+TEXT_SIZE = 0.3;
+include <DraftSCAD/dimdraft.scad>
+
+dimensions(length = 4);
+```
+
+It applies to the labels drawn by `dimensions()` and `leader_line()`. The gap a label needs follows the text size.
+
+Title blocks do not follow it. Their layout is written in line widths for text 7 line widths tall, so their text stays
+that size.
 
 With the defaults:
 

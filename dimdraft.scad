@@ -20,8 +20,10 @@ DEF_TEXT_COLOR = is_undef(TEXT_COLOR) ? "black" : TEXT_COLOR; // Default text co
 // ----- Dependent Constants -----
 // Hole center constant
 DIM_HOLE_CENTER = DIM_LINE_WIDTH * 6; // Size of the cross within a circle
-// Font scale relative to line widths
-DIM_FONTSCALE = DIM_LINE_WIDTH * 0.7;
+// Text is drawn at OpenSCAD's default size of 10 and scaled by DIM_FONTSCALE.
+// Its height is 7 line widths unless TEXT_SIZE is set.
+DIM_FONTSCALE = is_undef(TEXT_SIZE) ? DIM_LINE_WIDTH * 0.7 : TEXT_SIZE / 10;
+DIM_TEXT_SIZE = DIM_FONTSCALE * 10; // Height of the text
 
 DIM_GRID_SPACING = 50; // Default grid spacing value, standard for most drawings (i.e. ISO, ANSI, etc.)
 

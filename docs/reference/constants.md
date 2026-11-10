@@ -18,7 +18,8 @@ them.
 | `DIM_LINE_WIDTH`   | 0.025                           | Width of every line                            |
 | `DIM_LINE_HEIGHT`  | 0.01                            | Z thickness of every line                      |
 | `DIM_SPACE`        | 0.1                             | Spacing unit for placing annotations           |
-| `DIM_FONTSCALE`    | 0.0175                          | Scale applied to text                          |
+| `DIM_TEXT_SIZE`    | 0.175                           | Height of label text                           |
+| `DIM_FONTSCALE`    | 0.0175                          | Scale applied to label text                    |
 | `DIM_HOLE_CENTER`  | 0.15                            | Length of the marks drawn by `circle_center()` |
 | `DIM_GRID_SPACING` | 50                              | Default grid pitch; does not scale             |
 | `DEF_LINE_COLOR`   | `"black"`                       | Default line colour                            |

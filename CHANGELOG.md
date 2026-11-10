@@ -6,6 +6,28 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- The `TEXT_SIZE` override, read as `DIM_TEXT_SIZE`. It sets the height of dimension and leader labels without
+  changing the line width. The default is unchanged at 7 line widths (#2).
+- `dd_text_units()`, which estimates the width of a label. It is exact for numbers in the default font (#2).
+
+### Changed
+
+- `dimensions()` centres its label in the break in the line, and sizes the break from the label's estimated width.
+  Labels sit slightly differently from 0.1.0 (#2).
+- `dimensions()` with `DIM_LEFT` and `DIM_RIGHT` puts the label the same short distance from its arrow on either
+  side. The right-hand label used to sit a full label width away (#2).
+- A left-hand `leader_line()` label is right-aligned against its shoulder line (#2).
+- The circle drawn by `leader_line(do_circle = true)` is sized from the label, so its edge meets the end of the
+  shoulder line. It is smaller than in 0.1.0 (#2).
+
+### Fixed
+
+- Dimension labels overlapped arrows and the dimension line, most visibly at a large `SCALING_FACTOR` (#2).
+- `dimensions()` with `DIM_CENTER` produced negative-size geometry when the label did not fit. It now draws the
+  outside-arrows form (#2).
+
 ## [0.1.0] - 2026-11-10
 
 The first tagged version. It includes everything in "History before this changelog" below.
