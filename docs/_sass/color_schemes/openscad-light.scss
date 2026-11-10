@@ -1,0 +1,16 @@
+@use "sass:color";
+$color-scheme: openscad-light;
+$body-background-color: #ffffff;
+$body-heading-color: #1b2f01;
+$body-text-color: #1b2f01;
+$link-color: #9dcb51;
+$nav-child-link-color: #1b2f01;
+$sidebar-color: #ffffe5;
+$base-button-color: #f2f2ee;
+$btn-primary-color: #ffffe5;
+$code-background-color: #f5f5f5;
+$feedback-color: color.adjust(#fdffe5, $lightness: -10%);
+$table-background-color: #ffffff;
+$search-background-color: #ffffff;
+$search-result-preview-color: #1b2f01;
+$border-color: #f9d72c;

@@ -56,6 +56,8 @@ The [reference](docs/reference/index.md) has every parameter.
 
 ## Documentation
 
+The documentation site is at <https://cameronbrooks11.github.io/DraftSCAD/>. The same pages are in `docs/`:
+
 - [Getting started](docs/getting-started.md)
 - [Workflow](docs/usage/workflow.md): how to lay out a part, its views and its sheet
 - [Configuration](docs/usage/configuration.md): scale, line width and colour
