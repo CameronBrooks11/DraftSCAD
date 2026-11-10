@@ -4,7 +4,7 @@ _Note: This is out of date and needs a serious rework, in the current state it i
 
 **_At this time a more informative source of documentation on the current state of the library is to consult the [examples](../examples/README.md)._**
 
-If you want to contribute see [TODO](TODO.md) for a list of development tasks.
+If you want to contribute see the [open issues](https://github.com/CameronBrooks11/DraftSCAD/issues) for a list of development tasks.
 
 ### General Approach
 

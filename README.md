@@ -22,7 +22,7 @@ To get started, explore the [documentation](docs/README.md) and the [examples](e
 
 ## Contributing
 
-Contributions are welcome! Whether it's bug fixes, new features, or documentation improvements, your input helps make this project better. If you're interested in contributing, please check out the [TODO](docs/TODO.md) file for a list of development tasks and areas where help is needed. If you have suggestions or ideas that aren't listed, don't hesitate to open an issue to discuss them.
+Contributions are welcome! Whether it's bug fixes, new features, or documentation improvements, your input helps make this project better. If you're interested in contributing, please check out the [open issues](https://github.com/CameronBrooks11/DraftSCAD/issues) for a list of development tasks and areas where help is needed. If you have suggestions or ideas that aren't listed, don't hesitate to open an issue to discuss them.
 
 ## Acknowledgements
 
