@@ -2,10 +2,13 @@
 
 All notable changes to DraftSCAD are recorded here.
 
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). There is no tagged release yet;
-everything so far sits under Unreleased.
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+
+## [0.1.0] - 2026-11-10
+
+The first tagged version. It includes everything in "History before this changelog" below.
 
 ### Added
 
@@ -38,7 +41,7 @@ everything so far sits under Unreleased.
 
 ## History before this changelog
 
-Rebuilt from the commit log. These changes were never released under a version.
+Rebuilt from the commit log. These changes predate the first tag and are all part of 0.1.0.
 
 ### 2025-01-15
 
@@ -83,3 +86,6 @@ Rebuilt from the commit log. These changes were never released under a version.
 ### 2024-01-08
 
 - Imported from [pwpearson/dimensional-drawings](https://github.com/pwpearson/dimensional-drawings).
+
+[Unreleased]: https://github.com/CameronBrooks11/DraftSCAD/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/CameronBrooks11/DraftSCAD/releases/tag/v0.1.0
