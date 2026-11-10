@@ -39,12 +39,8 @@ it behind annotations drawn at Z = 0.
 
 `draw_sheet()` echoes to the console when it looks up a sheet symbol and when no grid is selected.
 
-> **Known issues.**
->
-> - `sheet_symbol` does not work. The size is found and then not used, and nothing is drawn. Pass `length` and
->   `height`: [#9](https://github.com/CameronBrooks11/DraftSCAD/issues/9).
-> - `grid_type = "Grid"` produces a warning for every grid line. `"Dot"` works:
->   [#10](https://github.com/CameronBrooks11/DraftSCAD/issues/10).
+> **Known issue.** `sheet_symbol` does not work. The size is found and then not used, and nothing is drawn. Pass
+> `length` and `height`: [#9](https://github.com/CameronBrooks11/DraftSCAD/issues/9).
 
 ## draw_frame
 
@@ -62,7 +58,7 @@ draw_grid(length, height, type = "None", grid_spacing = DIM_GRID_SPACING, line_w
 ```
 
 Draws only the background pattern over a `length` by `height` area from the origin. `type` is `"None"`, `"Dot"` or
-`"Grid"`. Called directly, `"Grid"` works.
+`"Grid"`.
 
 ## Standard sheet sizes
 
