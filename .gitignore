@@ -1,0 +1,13 @@
+# OpenSCAD exports. PNG is not listed: the images under docs/assets/images are tracked.
+*.csg
+*.stl
+*.3mf
+*.off
+*.amf
+*.dxf
+*.svg
+*.pdf
+
+# Editor and IDE directories
+.vscode/
+.idea/
