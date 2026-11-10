@@ -32,3 +32,6 @@ jobs:
 
       - name: Check
         run: just check
+
+      - name: Test
+        run: just test
