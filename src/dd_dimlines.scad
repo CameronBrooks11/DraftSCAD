@@ -9,6 +9,18 @@
  */
 
 /*
+ * dd_text_units(text)
+ * Estimates the width of a label in font units, at OpenSCAD's default text size of 10.
+ * Multiply by DIM_FONTSCALE for the width as drawn.
+ * In the default font every digit advances 7.724 units and a period or a space 3.859, so the estimate is
+ * exact for a number. Letters and other fonts differ: "R" advances 10.03 and "M" 11.57.
+ */
+function dd_text_units(text, i = 0) = i >= len(text)
+                                          ? 0
+                                          : ((text[i] == "." || text[i] == " ") ? 3.859 : 7.724) +
+                                                dd_text_units(text, i + 1);
+
+/*
  * arrow(arr_points, arr_length, height, color)
  * Creates a triangular arrow pointing to the left with specified dimensions.
  * Parameters:
@@ -134,55 +146,64 @@ module dimensions(length, line_width = DIM_LINE_WIDTH, line_height = DIM_LINE_HE
                   color = DEF_LINE_COLOR, text_color = DEF_TEXT_COLOR)
 {
     text = str(length);
-    space = len(text) * DIM_FONTSCALE * 7;
+    text_width = dd_text_units(text) * DIM_FONTSCALE;
+    pad = DIM_FONTSCALE * 3;       // clear space on each side of a label set into the line
+    gap = text_width + pad * 2;    // break in the line for a centred label
+    label_gap = DIM_FONTSCALE * 5; // distance from an arrow to a label beside it
+    arrowhead = line_width * 4;    // length of an arrowhead, tip to barbs
 
-    if (loc == DIM_CENTER)
+    // A centred label needs the break, and on each side an arrowhead and as much shaft again.
+    fits_centred = length - gap >= arrowhead * 4;
+    // Arrows outside the dimension are half its length, and never shorter than two arrowheads.
+    outside_length = max(length / 2, arrowhead * 2);
+
+    if (loc == DIM_CENTER && fits_centred)
     {
-        color(color) line(length = length / 2 - space / 2, width = line_width, height = line_height, left_arrow = true,
+        color(color) line(length = (length - gap) / 2, width = line_width, height = line_height, left_arrow = true,
                           right_arrow = false);
-        color(color) translate([ length / 2 + space / 2, 0, 0 ])
-            line(length = length / 2 - space / 2, width = line_width, height = line_height, left_arrow = false,
+        color(color) translate([ (length + gap) / 2, 0, 0 ])
+            line(length = (length - gap) / 2, width = line_width, height = line_height, left_arrow = false,
                  right_arrow = true);
 
-        color(text_color) translate([ (length) / 2 - space / 2 * .9, -DIM_FONTSCALE * 3, 0 ])
+        color(text_color) translate([ length / 2, -DIM_FONTSCALE * 3, 0 ])
+            scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text, halign = "center");
+    }
+    else if (loc == DIM_LEFT)
+    {
+        color(color)
+            line(length = length, width = line_width, height = line_height, left_arrow = true, right_arrow = true);
+
+        color(text_color) translate([ -label_gap, -DIM_FONTSCALE * 3, 0 ])
+            scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text, halign = "right");
+    }
+    else if (loc == DIM_RIGHT)
+    {
+        color(color)
+            line(length = length, width = line_width, height = line_height, left_arrow = true, right_arrow = true);
+
+        color(text_color) translate([ length + label_gap, -DIM_FONTSCALE * 3, 0 ])
             scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text);
     }
-    else
+    else if (loc == DIM_OUTSIDE || loc == DIM_CENTER)
     {
+        // Also the fallback for a centred label that does not fit.
+        color(color) rotate([ 0, 180, 0 ])
+            line(length = outside_length, width = line_width, height = line_height, left_arrow = true,
+                 right_arrow = false);
+        color(color) translate([ length, 0, 0 ])
+            line(length = outside_length, width = line_width, height = line_height, left_arrow = true,
+                 right_arrow = false);
 
-        if (loc == DIM_LEFT)
+        if (gap <= length)
         {
-            color(color)
-                line(length = length, width = line_width, height = line_height, left_arrow = true, right_arrow = true);
-
-            color(text_color) translate([ -space, -DIM_FONTSCALE * 3, 0 ])
-                scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text);
+            color(text_color) translate([ length / 2, -DIM_FONTSCALE * 3, 0 ])
+                scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text, halign = "center");
         }
         else
         {
-            if (loc == DIM_RIGHT)
-            {
-                color(color) line(length = length, width = line_width, height = line_height, left_arrow = true,
-                                  right_arrow = true);
-
-                color(text_color) translate([ length + space, -DIM_FONTSCALE * 3, 0 ])
-                    scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text);
-            }
-            else
-            {
-                if (loc == DIM_OUTSIDE)
-                {
-
-                    color(color) rotate([ 0, 180, 0 ])
-                        line(length = length / 2, width = line_width, height = line_height, left_arrow = true,
-                             right_arrow = false);
-                    color(color) translate([ length, 0, 0 ])
-                        line(length = length / 2, width = line_width, height = line_height, left_arrow = true,
-                             right_arrow = false);
-                    color(text_color) translate([ (length) / 2 - space / 2 * .9, -DIM_FONTSCALE * 3, 0 ])
-                        scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text);
-                }
-            }
+            // no room between the arrows: put the label past the right-hand one
+            color(text_color) translate([ length + outside_length + label_gap, -DIM_FONTSCALE * 3, 0 ])
+                scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text);
         }
     }
 }
@@ -206,7 +227,7 @@ module leader_line(angle, radius, angle_length, horz_length, direction = DIM_RIG
                    text_color = DEF_TEXT_COLOR)
 {
 
-    text_length = len(text) * DIM_FONTSCALE * 6;
+    text_width = dd_text_units(text) * DIM_FONTSCALE;
     space = DIM_FONTSCALE * 6;
 
     color(color) rotate([ 0, 0, angle ]) translate([ radius, 0, 0 ])
@@ -229,19 +250,21 @@ module leader_line(angle, radius, angle_length, horz_length, direction = DIM_RIG
                 line(length = horz_length, width = line_width, height = line_height, left_arrow = false,
                      right_arrow = false);
             if (len(text) > 0)
-                color(text_color) translate([ -(horz_length + space + text_length), -DIM_FONTSCALE * 3, 0 ])
-                    scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text);
+                color(text_color) translate([ -(horz_length + space), -DIM_FONTSCALE * 3, 0 ])
+                    scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text, halign = "right");
         }
 
         if (do_circle)
         {
             // centred on the label, on whichever side it was drawn
-            circle_x = horz_length + space + text_length / 2;
+            circle_x = horz_length + space + text_width / 2;
+            // the ring reaches back across the gap, so its edge meets the end of the shoulder line
+            ring_radius = space + text_width / 2;
             color(color) translate([ (direction == DIM_RIGHT ? circle_x : -circle_x), 0, 0 ]) difference()
             {
-                cylinder(h = line_height, r = text_length + space - line_width, center = true, $fn = 100);
+                cylinder(h = line_height, r = ring_radius, center = true, $fn = 100);
                 // twice the ring's height, so the cut goes through at any scale
-                cylinder(h = line_height * 2, r = text_length + space - line_width * 2, center = true, $fn = 100);
+                cylinder(h = line_height * 2, r = ring_radius - line_width, center = true, $fn = 100);
             }
         }
     }

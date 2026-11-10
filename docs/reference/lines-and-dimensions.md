@@ -81,6 +81,9 @@ Draws a dimension line from the origin along +X, `length` long, labelled with `l
 
 Use `DIM_LEFT`, `DIM_RIGHT` or `DIM_OUTSIDE` when the distance is too short to hold the label.
 
+If you do not, the module handles it. A `DIM_CENTER` dimension with no room for its label and two arrows is drawn in
+the `DIM_OUTSIDE` form. If the label does not fit between the arrows either, it goes to the right of them.
+
 ```scad
 include <DraftSCAD/dimdraft.scad>
 
@@ -102,10 +105,22 @@ Things to know:
 - The label is always `str(length)`. There is no way to add a prefix, a tolerance or units, or to set the precision.
 - A dimension is always horizontal. For a vertical one, wrap it in `rotate([ 0, 0, 90 ])`; the label rotates with it.
 - The module does not draw extension lines. Draw those with `line()`.
+- The room a label needs comes from `dd_text_units()`, an estimate that is exact for numbers in the default font.
 
-> **Known issue.** Labels can overlap arrows and each other, most visibly at a large `SCALING_FACTOR`, and
-> `DIM_CENTER` does not fall back when the label is wider than the distance. See
-> [#2](https://github.com/CameronBrooks11/DraftSCAD/issues/2).
+## dd_text_units
+
+```scad
+dd_text_units(text)
+```
+
+A function. It estimates the width of a string in font units, at OpenSCAD's default text size of 10. Multiply by
+`DIM_FONTSCALE` for the width as drawn.
+
+It counts 7.724 for every character except a period or a space, which count 3.859. Those are the advances of the
+digits, the period and the space in the default font, so the result is exact for a number: `dd_text_units("3.53")`
+is 27.031. It is only approximate for letters, which vary in width, and for any other font.
+
+The library estimates the width and does not call `textmetrics()`, so it needs nothing newer than OpenSCAD 2021.01.
 
 ## leader_line
 
@@ -144,8 +159,8 @@ leader_line(angle = -45, radius = radius, angle_length = 1, horz_length = 0.25, 
 
 ![Three leader lines around a hole centre: one to the right, one to the left, and one ending in a circled number](../assets/images/leader_line.png)
 
-The circle's radius grows with the length of the label, and the circle overlaps the end of the shoulder line. With a
-single character the overlap is about one line width; with more it shows.
+The circle is centred on the label and its edge meets the end of the shoulder line. Its size comes from
+`dd_text_units()`, so it fits a number; a label of letters may sit off-centre in it.
 
 ## circle_center
 

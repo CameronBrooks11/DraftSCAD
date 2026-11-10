@@ -43,7 +43,4 @@ A slotted disc 400 units across, drawn with `SCALING_FACTOR = 100`. It shows:
 - leader lines for radii
 - `titleblock1`
 
-Some labels in this drawing touch their arrows and each other. That is
-[#2](https://github.com/CameronBrooks11/DraftSCAD/issues/2).
-
 Both sheet examples follow the file layout described in [Workflow](../usage/workflow.md).
