@@ -144,8 +144,8 @@ leader_line(angle = -45, radius = radius, angle_length = 1, horz_length = 0.25, 
 
 ![Three leader lines around a hole centre: one to the right, one to the left, and one ending in a circled number](../assets/images/leader_line.png)
 
-> **Known issue.** `do_circle` has no effect with `direction = DIM_LEFT`, and its ring is cut with a fixed height
-> that is too small at a large `SCALING_FACTOR`: [#11](https://github.com/CameronBrooks11/DraftSCAD/issues/11).
+The circle's radius grows with the length of the label, and the circle overlaps the end of the shoulder line. With a
+single character the overlap is about one line width; with more it shows.
 
 ## circle_center
 

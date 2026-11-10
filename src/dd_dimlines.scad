@@ -223,15 +223,6 @@ module leader_line(angle, radius, angle_length, horz_length, direction = DIM_RIG
             if (len(text) > 0)
                 color(text_color) translate([ (horz_length + space), -DIM_FONTSCALE * 3, 0 ])
                     scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text);
-
-            if (do_circle)
-            {
-                color(color) translate([ (horz_length + space + text_length / 2), 0, 0 ]) difference()
-                {
-                    cylinder(h = line_height, r = text_length + space - line_width, center = true, $fn = 100);
-                    cylinder(h = .05, r = text_length + space - line_width * 2, center = true, $fn = 100);
-                }
-            }
         }
         else
         {
@@ -241,6 +232,18 @@ module leader_line(angle, radius, angle_length, horz_length, direction = DIM_RIG
             if (len(text) > 0)
                 color(text_color) translate([ -(horz_length + space + text_length), -DIM_FONTSCALE * 3, 0 ])
                     scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text);
+        }
+
+        if (do_circle)
+        {
+            // centred on the label, on whichever side it was drawn
+            circle_x = horz_length + space + text_length / 2;
+            color(color) translate([ (direction == DIM_RIGHT ? circle_x : -circle_x), 0, 0 ]) difference()
+            {
+                cylinder(h = line_height, r = text_length + space - line_width, center = true, $fn = 100);
+                // twice the ring's height, so the cut goes through at any scale
+                cylinder(h = line_height * 2, r = text_length + space - line_width * 2, center = true, $fn = 100);
+            }
         }
     }
 }
