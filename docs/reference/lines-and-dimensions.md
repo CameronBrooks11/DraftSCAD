@@ -111,7 +111,7 @@ Things to know:
 
 ```scad
 leader_line(angle, radius, angle_length, horz_length, direction = DIM_RIGHT, line_width = DIM_LINE_WIDTH,
-            line_height = DIM_LINE_HEIGHT, text, do_circle = false, color = DEF_LINE_COLOR,
+            line_height = DIM_LINE_HEIGHT, text = "", do_circle = false, color = DEF_LINE_COLOR,
             text_color = DEF_TEXT_COLOR)
 ```
 
@@ -124,7 +124,7 @@ Draws an arrow pointing at the origin from a given angle, a horizontal shoulder,
 | `angle_length` | Length of the angled segment                                                 |
 | `horz_length`  | Length of the horizontal shoulder                                            |
 | `direction`    | `DIM_RIGHT` or `DIM_LEFT`: which way the shoulder and label extend           |
-| `text`         | The label                                                                    |
+| `text`         | The label; leave it out to draw the line alone                               |
 | `do_circle`    | Draw a circle around the label, for a balloon number                         |
 
 Translate to the centre of the feature first. To point at the rim of a hole, pass the hole's radius as `radius`. To
@@ -144,11 +144,8 @@ leader_line(angle = -45, radius = radius, angle_length = 1, horz_length = 0.25, 
 
 ![Three leader lines around a hole centre: one to the right, one to the left, and one ending in a circled number](../assets/images/leader_line.png)
 
-> **Known issues.**
->
-> - `text` has no default. Leaving it out produces warnings: [#12](https://github.com/CameronBrooks11/DraftSCAD/issues/12).
-> - `do_circle` has no effect with `direction = DIM_LEFT`, and its ring is cut with a fixed height that is too
->   small at a large `SCALING_FACTOR`: [#11](https://github.com/CameronBrooks11/DraftSCAD/issues/11).
+> **Known issue.** `do_circle` has no effect with `direction = DIM_LEFT`, and its ring is cut with a fixed height
+> that is too small at a large `SCALING_FACTOR`: [#11](https://github.com/CameronBrooks11/DraftSCAD/issues/11).
 
 ## circle_center
 

@@ -30,6 +30,7 @@ everything so far sits under Unreleased.
 ### Fixed
 
 - `mypart()` in the Don Smiley example ignored its `radius` parameter (#13).
+- `leader_line()` produced warnings when called without `text`. The label is now optional (#12).
 
 ## History before this changelog
 
