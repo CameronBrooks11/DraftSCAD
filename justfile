@@ -12,3 +12,7 @@ check:
         echo "$f"; \
         {{ openscad }} --hardwarnings --export-format csg -o - "$f" > /dev/null; \
     done
+
+# Run the fixtures in tests/ and check what each one produces
+test:
+    @OPENSCAD={{ openscad }} bash tests/run.sh
