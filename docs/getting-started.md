@@ -15,7 +15,7 @@ git clone https://github.com/CameronBrooks11/DraftSCAD.git
 
 You can also clone it next to your project and include it by relative path.
 
-DraftSCAD is developed against OpenSCAD 2026.10.15. Older releases are not tested.
+DraftSCAD is developed against OpenSCAD 2026.10.15. The examples are also evaluated on the 2021.01 release in CI.
 
 ## Include the library
 
