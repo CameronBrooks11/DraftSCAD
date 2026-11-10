@@ -47,7 +47,7 @@ module draw_sheet(length = undef, height = undef, sheet_symbol = undef, line_wid
         // Draw the grid or dots before drawing the frame to ensure it's in the background
         draw_frame(length, height, line_width, line_height, color);
         translate([ 0, 0, -DIM_LINE_WIDTH ])
-            draw_grid(length, height, grid_type, grid_dim, grid_line_width, "lightgray");
+            draw_grid(length, height, grid_type, grid_dim, grid_line_width, line_height, "lightgray");
     }
     else
     {
