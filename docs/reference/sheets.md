@@ -39,9 +39,6 @@ it behind annotations drawn at Z = 0.
 
 `draw_sheet()` echoes to the console when it looks up a sheet symbol and when no grid is selected.
 
-> **Known issue.** `sheet_symbol` does not work. The size is found and then not used, and nothing is drawn. Pass
-> `length` and `height`: [#9](https://github.com/CameronBrooks11/DraftSCAD/issues/9).
-
 ## draw_frame
 
 ```scad
@@ -73,11 +70,13 @@ portrait orientation.
 | ASME Y14.1            | `ENG_A`, `ENG_B`, `ENG_C`, `ENG_D`, `ENG_E`        |
 | JIS B series          | `B0`, `B1`, `B2`, `B3`, `B4`                       |
 
-Until `sheet_symbol` is fixed, look a size up yourself:
+Pass a name as `sheet_symbol`:
 
 ```scad
 include <DraftSCAD/dimdraft.scad>
 
-a4 = [for (s = sheet_sizes) if (s[0] == "A4") s[1]][0];
-draw_sheet(length = a4[0], height = a4[1]);
+draw_sheet(sheet_symbol = "A4");
 ```
+
+The sizes are in millimetres whatever `SCALING_FACTOR` is, so a standard sheet suits a model drawn in millimetres. A
+name that is not in the list draws nothing, unless `length` and `height` are given as well.

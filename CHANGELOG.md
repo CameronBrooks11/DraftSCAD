@@ -32,6 +32,7 @@ everything so far sits under Unreleased.
 - `mypart()` in the Don Smiley example ignored its `radius` parameter (#13).
 - `leader_line()` produced warnings when called without `text`. The label is now optional (#12).
 - `draw_sheet()` with `grid_type = "Grid"` passed the grid colour as the line height and warned on every grid line (#10).
+- `draw_sheet(sheet_symbol = ...)` found the sheet size and then drew nothing (#9).
 
 ## History before this changelog
 
