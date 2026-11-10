@@ -16,6 +16,7 @@ everything so far sits under Unreleased.
 - A `.gitignore` for OpenSCAD exports and editor directories, and a CI run of `just check` on every pull request
   (#17).
 - This changelog (#14).
+- `just test`, which runs the fixtures in `tests/` and checks what each one produces (#19).
 
 ### Changed
 
@@ -25,6 +26,10 @@ everything so far sits under Unreleased.
 ### Removed
 
 - The legacy write-up in `docs/README.md` and its sample images (#15).
+
+### Fixed
+
+- `mypart()` in the Don Smiley example ignored its `radius` parameter (#13).
 
 ## History before this changelog
 

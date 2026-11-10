@@ -68,7 +68,7 @@ The documentation site is at <https://cameronbrooks11.github.io/DraftSCAD/>. The
 
 Contributions are welcome! Whether it's bug fixes, new features, or documentation improvements, your input helps make this project better. If you're interested in contributing, please check out the [open issues](https://github.com/CameronBrooks11/DraftSCAD/issues) for a list of development tasks and areas where help is needed. If you have suggestions or ideas that aren't listed, don't hesitate to open an issue to discuss them.
 
-Run `just check` before opening a pull request. It evaluates every example with OpenSCAD and fails on any warning. If the change is one a user of the library would notice, add a line under Unreleased in [CHANGELOG.md](CHANGELOG.md).
+Run `just check` and `just test` before opening a pull request. The first evaluates every example with OpenSCAD and fails on any warning; the second runs the fixtures in `tests/`. If the change is one a user of the library would notice, add a line under Unreleased in [CHANGELOG.md](CHANGELOG.md).
 
 ## Acknowledgements
 
