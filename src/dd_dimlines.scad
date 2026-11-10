@@ -197,13 +197,13 @@ module dimensions(length, line_width = DIM_LINE_WIDTH, line_height = DIM_LINE_HE
  * - horz_length: Length of the horizontal line portion.
  * - direction: Direction of the horizontal line (DIM_RIGHT or DIM_LEFT).
  * - line_width: Thickness of the line.
- * - text: Text annotation for the leader.
+ * - text: Text annotation for the leader. Optional; with none, only the line is drawn.
  * - do_circle: Boolean to include a circle around the annotation.
  * - color: Color of the lines.
  * - text_color: Color of the annotation text.
  */
 module leader_line(angle, radius, angle_length, horz_length, direction = DIM_RIGHT, line_width = DIM_LINE_WIDTH,
-                   line_height = DIM_LINE_HEIGHT, text, do_circle = false, color = DEF_LINE_COLOR,
+                   line_height = DIM_LINE_HEIGHT, text = "", do_circle = false, color = DEF_LINE_COLOR,
                    text_color = DEF_TEXT_COLOR)
 {
 
@@ -220,8 +220,9 @@ module leader_line(angle, radius, angle_length, horz_length, direction = DIM_RIG
             color(color) line(length = horz_length, width = line_width, height = line_height, left_arrow = false,
                               right_arrow = false);
 
-            color(text_color) translate([ (horz_length + space), -DIM_FONTSCALE * 3, 0 ])
-                scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text);
+            if (len(text) > 0)
+                color(text_color) translate([ (horz_length + space), -DIM_FONTSCALE * 3, 0 ])
+                    scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text);
 
             if (do_circle)
             {
@@ -237,8 +238,9 @@ module leader_line(angle, radius, angle_length, horz_length, direction = DIM_RIG
             color(color) translate([ -horz_length, 0, 0 ])
                 line(length = horz_length, width = line_width, height = line_height, left_arrow = false,
                      right_arrow = false);
-            color(text_color) translate([ -(horz_length + space + text_length), -DIM_FONTSCALE * 3, 0 ])
-                scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text);
+            if (len(text) > 0)
+                color(text_color) translate([ -(horz_length + space + text_length), -DIM_FONTSCALE * 3, 0 ])
+                    scale([ DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE ]) text(text);
         }
     }
 }
