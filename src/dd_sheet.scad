@@ -79,12 +79,12 @@ module draw_frame(length, height, line_width = DIM_LINE_WIDTH, line_height = DIM
         translate([ 0, height, 0 ]) line(length = length, width = line_width, height = line_height);
 
         // Left vertical line
-        translate([ line_width / 2, line_width / 2, 0 ]) rotate([ 0, 0, 90 ])
-            line(length = height - line_width, width = line_width, height = line_height);
+        translate([ line_width / 2, line_width / 2, 0 ])
+            line(length = height - line_width, width = line_width, height = line_height, vert = true);
 
         // Right vertical line
-        translate([ length - line_width / 2, line_width / 2, 0 ]) rotate([ 0, 0, 90 ])
-            line(length = height - line_width, width = line_width, height = line_height);
+        translate([ length - line_width / 2, line_width / 2, 0 ])
+            line(length = height - line_width, width = line_width, height = line_height, vert = true);
     }
 }
 
@@ -110,9 +110,7 @@ module draw_grid(length, height, type = "None", grid_spacing = DIM_GRID_SPACING,
             // Draw vertical grid lines
             for (x = [0:grid_spacing:length])
             {
-                translate([ x, 0, 0 ]) rotate([ 0, 0, 90 ]) // Rotate to vertical
-                    line(length = height, width = line_width, height = line_height, left_arrow = false,
-                         right_arrow = false);
+                translate([ x, 0, 0 ]) line(length = height, width = line_width, height = line_height, vert = true);
             }
 
             // Draw horizontal grid lines
