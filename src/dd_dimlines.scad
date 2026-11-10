@@ -110,14 +110,13 @@ module circle_center(radius, size = DIM_HOLE_CENTER, line_width = DIM_LINE_WIDTH
         translate([ -radius - size / 2, 0, 0 ])
             line(length = size, width = line_width, height = line_height, left_arrow = false, right_arrow = false);
 
-        translate([ 0, -size / 2, 0 ]) rotate([ 0, 0, 90 ])
-            line(length = size, width = line_width, height = line_height, left_arrow = false, right_arrow = false);
+        translate([ 0, -size / 2, 0 ]) line(length = size, width = line_width, height = line_height, vert = true);
 
-        translate([ 0, radius - size / 2, 0 ]) rotate([ 0, 0, 90 ])
-            line(length = size, width = line_width, height = line_height, left_arrow = false, right_arrow = false);
+        translate([ 0, radius - size / 2, 0 ])
+            line(length = size, width = line_width, height = line_height, vert = true);
 
-        translate([ 0, -radius - size / 2, 0 ]) rotate([ 0, 0, 90 ])
-            line(length = size, width = line_width, height = line_height, left_arrow = false, right_arrow = false);
+        translate([ 0, -radius - size / 2, 0 ])
+            line(length = size, width = line_width, height = line_height, vert = true);
     }
 }
 

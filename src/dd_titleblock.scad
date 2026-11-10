@@ -33,7 +33,9 @@ module titleblock(lines, descs, details, color = DEF_LINE_COLOR, text_color = DE
     {
         color(color) translate([ line[0] * DIM_LINE_WIDTH, line[1] * DIM_LINE_WIDTH, 0 ]) if (line[2] == DIM_VERT)
         {
-            rotate([ 0, 0, -90 ]) line(length = line[3] * DIM_LINE_WIDTH, width = DIM_LINE_WIDTH * line[4]);
+            // a vertical line runs down from its start point, and line() draws upward
+            translate([ 0, -line[3] * DIM_LINE_WIDTH, 0 ])
+                line(length = line[3] * DIM_LINE_WIDTH, width = DIM_LINE_WIDTH * line[4], vert = true);
         }
         else
         {
