@@ -23,16 +23,18 @@ module draw_sheet(length = undef, height = undef, sheet_symbol = undef, line_wid
                   grid_type = "None", grid_dim = DIM_GRID_SPACING, grid_line_width = DIM_LINE_WIDTH,
                   color = DEF_LINE_COLOR)
 {
-    // If a sheet symbol is provided, override length and height using the sheet_sizes array
+    // If a sheet symbol is provided, it overrides length and height using the sheet_sizes array.
+    // An assignment inside an if block is local to that block, so the size is resolved here.
+    matches = is_undef(sheet_symbol) ? [] : [for (sheet = sheet_sizes) if (sheet[0] == sheet_symbol) sheet[1]];
+    sheet_length = len(matches) > 0 ? matches[0][0] : length;
+    sheet_height = len(matches) > 0 ? matches[0][1] : height;
+
     if (!is_undef(sheet_symbol))
     {
         echo("Looking for sheet symbol: ", sheet_symbol);
-        matches = [for (sheet = sheet_sizes) if (sheet[0] == sheet_symbol) sheet[1]];
 
         if (len(matches) > 0)
         {
-            length = matches[0][0];
-            height = matches[0][1];
             echo("Match found for sheet symbol: ", sheet_symbol, " Dimensions: ", matches[0]);
         }
         else
@@ -42,12 +44,12 @@ module draw_sheet(length = undef, height = undef, sheet_symbol = undef, line_wid
     }
 
     // Proceed only if length and height are defined
-    if (!is_undef(length) && !is_undef(height))
+    if (!is_undef(sheet_length) && !is_undef(sheet_height))
     {
         // Draw the grid or dots before drawing the frame to ensure it's in the background
-        draw_frame(length, height, line_width, line_height, color);
+        draw_frame(sheet_length, sheet_height, line_width, line_height, color);
         translate([ 0, 0, -DIM_LINE_WIDTH ])
-            draw_grid(length, height, grid_type, grid_dim, grid_line_width, line_height, "lightgray");
+            draw_grid(sheet_length, sheet_height, grid_type, grid_dim, grid_line_width, line_height, "lightgray");
     }
     else
     {
