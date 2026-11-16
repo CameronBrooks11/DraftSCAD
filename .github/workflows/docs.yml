@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - id: site
-        uses: CameronBrooks11/just-the-docs-template-openscad/build@v1
+        uses: CameronBrooks11/just-the-docs-template-openscad@v2
       - if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v5
         with:
