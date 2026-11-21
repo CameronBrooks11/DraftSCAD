@@ -3,4 +3,4 @@
 // reject: cube\(
 include <../dimdraft.scad>
 
-draw_sheet(sheet_symbol = "NOT_A_SHEET");
+draw_sheet(sheet_symbol="NOT_A_SHEET");

@@ -5,4 +5,4 @@
 // reject: Invalid dimensions
 include <../dimdraft.scad>
 
-draw_sheet(sheet_symbol = "A4");
+draw_sheet(sheet_symbol="A4");

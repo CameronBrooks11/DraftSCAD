@@ -25,49 +25,38 @@
  * - Draws lines and places text (descriptions and details) at specified positions.
  * - Handles horizontal and vertical orientations for text and lines.
  */
-module titleblock(lines, descs, details, color = DEF_LINE_COLOR, text_color = DEF_TEXT_COLOR)
-{
+module titleblock(lines, descs, details, color = DEF_LINE_COLOR, text_color = DEF_TEXT_COLOR) {
     DIM_FONTSCALE = DIM_LINE_WIDTH * 0.7;
 
     for (line = lines)
     {
-        color(color) translate([ line[0] * DIM_LINE_WIDTH, line[1] * DIM_LINE_WIDTH, 0 ]) if (line[2] == DIM_VERT)
-        {
-            // a vertical line runs down from its start point, and line() draws upward
-            translate([ 0, -line[3] * DIM_LINE_WIDTH, 0 ])
-                line(length = line[3] * DIM_LINE_WIDTH, width = DIM_LINE_WIDTH * line[4], vert = true);
-        }
-        else
-        {
-            line(length = (line[3] + 1) * DIM_LINE_WIDTH, width = DIM_LINE_WIDTH * line[4]);
-        }
+        color(color) translate([line[0] * DIM_LINE_WIDTH, line[1] * DIM_LINE_WIDTH, 0]) if (line[2] == DIM_VERT) {
+                // a vertical line runs down from its start point, and line() draws upward
+                translate([0, -line[3] * DIM_LINE_WIDTH, 0])
+                    line(length=line[3] * DIM_LINE_WIDTH, width=DIM_LINE_WIDTH * line[4], vert=true);
+            } else {
+                line(length=(line[3] + 1) * DIM_LINE_WIDTH, width=DIM_LINE_WIDTH * line[4]);
+            }
     }
 
-    color(text_color)
-    {
+    color(text_color) {
         for (line = descs)
         {
-            translate([ line[0] * DIM_LINE_WIDTH, line[1] * DIM_LINE_WIDTH, 0 ]) if (line[2] == DIM_VERT)
-            {
-                rotate([ 0, 0, 90 ])
-                    scale([ DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4] ]) text(line[3]);
-            }
-            else
-            {
-                scale([ DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4] ]) text(line[3]);
+            translate([line[0] * DIM_LINE_WIDTH, line[1] * DIM_LINE_WIDTH, 0]) if (line[2] == DIM_VERT) {
+                rotate([0, 0, 90])
+                    scale([DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4]]) text(line[3]);
+            } else {
+                scale([DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4]]) text(line[3]);
             }
         }
 
         for (line = details)
         {
-            translate([ line[0] * DIM_LINE_WIDTH, line[1] * DIM_LINE_WIDTH, 0 ]) if (line[2] == DIM_VERT)
-            {
-                rotate([ 0, 0, 90 ])
-                    scale([ DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4] ]) text(line[3]);
-            }
-            else
-            {
-                scale([ DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4] ]) text(line[3]);
+            translate([line[0] * DIM_LINE_WIDTH, line[1] * DIM_LINE_WIDTH, 0]) if (line[2] == DIM_VERT) {
+                rotate([0, 0, 90])
+                    scale([DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4]]) text(line[3]);
+            } else {
+                scale([DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4]]) text(line[3]);
             }
         }
     }

@@ -3,4 +3,4 @@
 // reject: r1 = 200
 include <../examples/donsmiley/examplePart_DS.scad>
 
-mypart(radius = 50);
+mypart(radius=50);

@@ -4,7 +4,7 @@ DOC_SCALING_FACTOR = is_undef(SCALING_FACTOR) ? 1 : SCALING_FACTOR;
 // Line and text related constants
 
 DIM_LINE_WIDTH_NOMINAL = 0.025; // Nominal line width
-DIM_SPACE_NOMINAL = 0.1;        // Nominal spacing value for line spacing adjustments
+DIM_SPACE_NOMINAL = 0.1; // Nominal spacing value for line spacing adjustments
 DIM_LINE_HEIGHT_NOMINAL = 0.01; // Nominal height of lines
 
 DIM_LINE_WIDTH =

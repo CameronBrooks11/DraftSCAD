@@ -12,6 +12,8 @@
 SCALING_FACTOR = 100;
 include <../dimdraft.scad>
 
-leader_line(angle = 45, radius = 0, angle_length = 100, horz_length = 30, text = "1", do_circle = true);
-leader_line(angle = 135, radius = 0, angle_length = 100, horz_length = 30, direction = DIM_LEFT, text = "22",
-            do_circle = true);
+leader_line(angle=45, radius=0, angle_length=100, horz_length=30, text="1", do_circle=true);
+leader_line(
+    angle=135, radius=0, angle_length=100, horz_length=30, direction=DIM_LEFT, text="22",
+    do_circle=true
+);
