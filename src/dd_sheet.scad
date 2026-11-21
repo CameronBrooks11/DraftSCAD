@@ -19,46 +19,45 @@ include <../drawing_sheet_sizes.scad>;
  * - line_width: Thickness of the sheet boundary lines.
  * - color: Optional parameter to set the frame's color.
  */
-module draw_sheet(length = undef, height = undef, sheet_symbol = undef, line_width = DIM_LINE_WIDTH * 2, line_height = DIM_LINE_HEIGHT,
-                  grid_type = "None", grid_dim = DIM_GRID_SPACING, grid_line_width = DIM_LINE_WIDTH,
-                  color = DEF_LINE_COLOR)
-{
+module draw_sheet(
+    length = undef,
+    height = undef,
+    sheet_symbol = undef,
+    line_width = DIM_LINE_WIDTH * 2,
+    line_height = DIM_LINE_HEIGHT,
+    grid_type = "None",
+    grid_dim = DIM_GRID_SPACING,
+    grid_line_width = DIM_LINE_WIDTH,
+    color = DEF_LINE_COLOR
+) {
     // If a sheet symbol is provided, it overrides length and height using the sheet_sizes array.
     // An assignment inside an if block is local to that block, so the size is resolved here.
     matches = is_undef(sheet_symbol) ? [] : [for (sheet = sheet_sizes) if (sheet[0] == sheet_symbol) sheet[1]];
     sheet_length = len(matches) > 0 ? matches[0][0] : length;
     sheet_height = len(matches) > 0 ? matches[0][1] : height;
 
-    if (!is_undef(sheet_symbol))
-    {
+    if (!is_undef(sheet_symbol)) {
         echo("Looking for sheet symbol: ", sheet_symbol);
 
-        if (len(matches) > 0)
-        {
+        if (len(matches) > 0) {
             echo("Match found for sheet symbol: ", sheet_symbol, " Dimensions: ", matches[0]);
-        }
-        else
-        {
+        } else {
             echo("Warning: Sheet symbol '", sheet_symbol, "' not found.");
         }
     }
 
     // Proceed only if length and height are defined
-    if (!is_undef(sheet_length) && !is_undef(sheet_height))
-    {
+    if (!is_undef(sheet_length) && !is_undef(sheet_height)) {
         // Draw the grid or dots before drawing the frame to ensure it's in the background
         draw_frame(sheet_length, sheet_height, line_width, line_height, color);
-        translate([ 0, 0, -DIM_LINE_WIDTH ])
+        translate([0, 0, -DIM_LINE_WIDTH])
             draw_grid(sheet_length, sheet_height, grid_type, grid_dim, grid_line_width, line_height, "lightgray");
-    }
-    else
-    {
+    } else {
         echo("Warning: Invalid dimensions. Frame not drawn.");
     }
 }
 
-module draw_frame(length, height, line_width = DIM_LINE_WIDTH, line_height = DIM_LINE_HEIGHT, color = DEF_LINE_COLOR)
-{
+module draw_frame(length, height, line_width = DIM_LINE_WIDTH, line_height = DIM_LINE_HEIGHT, color = DEF_LINE_COLOR) {
     /*
      * draw_frame(length, height, line_width, color)
      * Draws the rectangular frame of a sheet with specified dimensions and line width.
@@ -70,27 +69,32 @@ module draw_frame(length, height, line_width = DIM_LINE_WIDTH, line_height = DIM
      * Behavior:
      * - Creates a rectangular frame with horizontal and vertical lines.
      */
-    color(color)
-    {
+    color(color) {
         // Bottom horizontal line
-        line(length = length, width = line_width, height = line_height);
+        line(length=length, width=line_width, height=line_height);
 
         // Top horizontal line
-        translate([ 0, height, 0 ]) line(length = length, width = line_width, height = line_height);
+        translate([0, height, 0]) line(length=length, width=line_width, height=line_height);
 
         // Left vertical line
-        translate([ line_width / 2, line_width / 2, 0 ])
-            line(length = height - line_width, width = line_width, height = line_height, vert = true);
+        translate([line_width / 2, line_width / 2, 0])
+            line(length=height - line_width, width=line_width, height=line_height, vert=true);
 
         // Right vertical line
-        translate([ length - line_width / 2, line_width / 2, 0 ])
-            line(length = height - line_width, width = line_width, height = line_height, vert = true);
+        translate([length - line_width / 2, line_width / 2, 0])
+            line(length=height - line_width, width=line_width, height=line_height, vert=true);
     }
 }
 
-module draw_grid(length, height, type = "None", grid_spacing = DIM_GRID_SPACING, line_width = DIM_LINE_WIDTH / 2,
-                 line_height = DIM_LINE_HEIGHT, color = "lightgray")
-{
+module draw_grid(
+    length,
+    height,
+    type = "None",
+    grid_spacing = DIM_GRID_SPACING,
+    line_width = DIM_LINE_WIDTH / 2,
+    line_height = DIM_LINE_HEIGHT,
+    color = "lightgray"
+) {
     /*
      * draw_grid(length, height, type, grid_spacing, line_width, color)
      * Adds a grid or dot pattern to the sheet.
@@ -103,28 +107,25 @@ module draw_grid(length, height, type = "None", grid_spacing = DIM_GRID_SPACING,
      * - color: Color of the grid lines or dots.
      */
 
-    if (type == "Grid")
-    {
-        color(color)
-        {
+    if (type == "Grid") {
+        color(color) {
             // Draw vertical grid lines
             for (x = [0:grid_spacing:length])
             {
-                translate([ x, 0, 0 ]) line(length = height, width = line_width, height = line_height, vert = true);
+                translate([x, 0, 0]) line(length=height, width=line_width, height=line_height, vert=true);
             }
 
             // Draw horizontal grid lines
             for (y = [0:grid_spacing:height])
             {
-                translate([ 0, y, 0 ]) line(length = length, width = line_width, height = line_height,
-                                            left_arrow = false, right_arrow = false);
+                translate([0, y, 0]) line(
+                        length=length, width=line_width, height=line_height,
+                        left_arrow=false, right_arrow=false
+                    );
             }
         }
-    }
-    else if (type == "Dot")
-    {
-        color(color)
-        {
+    } else if (type == "Dot") {
+        color(color) {
             // Define dot size
             dot_size = line_width; // You can adjust the dot size as needed
 
@@ -132,13 +133,11 @@ module draw_grid(length, height, type = "None", grid_spacing = DIM_GRID_SPACING,
             {
                 for (y = [0:grid_spacing:height])
                 {
-                    translate([ x, y, 0 ]) sphere(r = dot_size, $fn = 12);
+                    translate([x, y, 0]) sphere(r=dot_size, $fn=12);
                 }
             }
         }
-    }
-    else
-    {
+    } else {
         echo("No grid or dot pattern selected.");
     }
 }

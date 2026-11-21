@@ -6,5 +6,5 @@
 SCALING_FACTOR = 100;
 include <../dimdraft.scad>
 
-dimensions(length = 30);
-translate([ 0, 100, 0 ]) dimensions(length = 5);
+dimensions(length=30);
+translate([0, 100, 0]) dimensions(length=5);

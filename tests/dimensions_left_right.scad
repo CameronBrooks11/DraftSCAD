@@ -5,5 +5,5 @@
 // expect: \[1, 0, 0, 2\.5875\]
 include <../dimdraft.scad>
 
-dimensions(length = 2.5, loc = DIM_LEFT);
-translate([ 0, 1, 0 ]) dimensions(length = 2.5, loc = DIM_RIGHT);
+dimensions(length=2.5, loc=DIM_LEFT);
+translate([0, 1, 0]) dimensions(length=2.5, loc=DIM_RIGHT);

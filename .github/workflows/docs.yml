@@ -1,3 +1,7 @@
+# Docs-site workflow for an OpenSCAD repo: builds the site with the
+# just-the-docs-template-openscad engine and deploys it to Pages from main.
+# Copy to .github/workflows/docs.yml. See docs/openscad-repos.md.
+
 name: Docs site
 
 on:
@@ -9,9 +13,11 @@ on:
 permissions:
   contents: read
 
+# A newer pull-request run replaces an older one; a run on main is never
+# cancelled, so a second push cannot stop a Pages deploy partway.
 concurrency:
   group: docs-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
