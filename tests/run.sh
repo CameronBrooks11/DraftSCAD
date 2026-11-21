@@ -16,8 +16,11 @@ for fixture in "$dir"/*.scad; do
     name=$(basename "$fixture")
     problems=()
 
-    if ! out=$("$openscad" --hardwarnings --export-format csg -o - "$fixture" 2>&1); then
-        problems+=("OpenSCAD exited with a warning or error")
+    # A failed assert still exits 0, so the output is read as well as the exit status.
+    status=0
+    out=$("$openscad" --hardwarnings --export-format csg -o - "$fixture" 2>&1) || status=$?
+    if ((status)) || grep -Eq '^(WARNING|ERROR)' <<<"$out"; then
+        problems+=("OpenSCAD reported a warning or error")
     fi
 
     while IFS= read -r pattern; do
