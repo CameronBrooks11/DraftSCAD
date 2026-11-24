@@ -1,0 +1,22 @@
+# The pictures `just images` draws into docs/assets/images: name, source, flags, tab-separated.
+#
+# name    the file written, docs/assets/images/<name>
+# source  a .scad file, drawn as it is; or a docs page, which draws the scad block just before
+#         the page's image of that name, with the page's `// file:` blocks beside it
+# flags   OpenSCAD options for the picture: the camera, the projection and the size
+#
+# Every picture in docs/assets/images needs a row; `just docs-check` fails on one without.
+
+# the reference pages: a single drawing each, framed by --viewall
+lines.png	docs/reference/lines-and-dimensions.md	--camera=0,0,0,0,0,0,0 --viewall --autocenter --projection=o --imgsize=900,500
+dimensions.png	docs/reference/lines-and-dimensions.md	--camera=0,0,0,0,0,0,0 --viewall --autocenter --projection=o --imgsize=900,500
+leader_line.png	docs/reference/lines-and-dimensions.md	--camera=0,0,0,0,0,0,0 --viewall --autocenter --projection=o --imgsize=900,500
+circle_center.png	docs/reference/lines-and-dimensions.md	--camera=0,0,0,0,0,0,0 --viewall --autocenter --projection=o --imgsize=900,500
+
+# the guides
+first_drawing.png	docs/getting-started.md	--camera=0,0,0,0,0,0,0 --viewall --autocenter --projection=o --imgsize=900,500
+workflow_sheet.png	docs/usage/workflow.md	--camera=0,0,0,0,0,0,0 --viewall --autocenter --projection=o --imgsize=1100,850
+
+# the example sheets, on the README and the examples page; the camera frames the sheet itself
+example_CM.png	examples/cannymachines/example_CM.scad	--camera=8.5,5.5,0,0,0,0,29.1 --projection=o --imgsize=1150,750
+example_DS.png	examples/donsmiley/example_DS.scad	--camera=850,550,0,0,0,0,2915 --projection=o --imgsize=1150,750
