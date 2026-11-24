@@ -27,7 +27,14 @@ for fixture in "$dir"/*.scad; do
     name=$(basename "$fixture")
     problems=()
 
-    min=$(sed -n 's|^// min-openscad: ||p' "$fixture")
+    min=$(sed -n 's|^// min-openscad:||p' "$fixture")
+    if [[ -n $min && ! $min =~ ^\ [0-9]+(\.[0-9]+)*$ ]]; then
+        failed=$((failed + 1))
+        echo "FAIL $name"
+        echo "     min-openscad must be one version, such as 2026.10.15: '$min'"
+        continue
+    fi
+    min=${min# }
     if [[ -n $min && $(printf '%s\n' "$min" "$version" | sort -V | head -n1) != "$min" ]]; then
         skipped=$((skipped + 1))
         echo "skip $name (needs OpenSCAD $min, have $version)"
