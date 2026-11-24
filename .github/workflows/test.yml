@@ -62,3 +62,23 @@ jobs:
 
       - name: Run the tests
         run: just test
+
+  # The library also supports OpenSCAD 2021.01, the build Debian and Ubuntu ship.
+  # This evaluates the examples on it; the fixtures stay on the snapshot, as they
+  # may use features 2021.01 lacks. Not a required check.
+  compat-2021:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install OpenSCAD 2021.01
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq openscad
+          openscad --version 2>&1 | tee /dev/stderr | grep -q "OpenSCAD version 2021.01"
+
+      - name: Install just
+        uses: extractions/setup-just@v4
+
+      - name: Evaluate the examples
+        run: just examples

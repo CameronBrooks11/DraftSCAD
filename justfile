@@ -7,7 +7,10 @@ default:
     @just --list
 
 # Check formatting, then evaluate every example and fail on the first warning
-check: fmt-check
+check: fmt-check examples
+
+# Evaluate every example and fail on the first warning
+examples:
     @for f in examples/*/*.scad; do \
         echo "$f"; \
         status=0; out=$({{ openscad }} --hardwarnings --export-format csg -o /dev/null "$f" 2>&1) || status=$?; \
