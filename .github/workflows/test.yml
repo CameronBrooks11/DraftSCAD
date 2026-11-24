@@ -1,6 +1,10 @@
 # Test workflow for an OpenSCAD repo: runs `just check` (formatting included) and
-# `just test` on the OpenSCAD snapshot the docs engine pins. Copy to
-# .github/workflows/test.yml. See docs/openscad-repos.md.
+# `just test` on the OpenSCAD snapshot the docs engine pins. From dev-toolbox's
+# templates/ci/openscad-test.yml (docs/openscad-repos.md), but not a copy of it:
+# it has no scadman step, as DraftSCAD has no outside libraries; it installs
+# topiary and runs `just check`, as the standard's formatting section asks; and
+# it adds the compat-2021 job, because the library supports the 2021.01 build
+# that the standard leaves out. Diff against the template before syncing.
 
 name: Test
 
@@ -59,6 +63,29 @@ jobs:
 
       - name: Check
         run: just check
+
+      - name: Run the tests
+        run: just test
+
+  # The library also supports OpenSCAD 2021.01, the build Debian and Ubuntu ship.
+  # This evaluates the examples and runs the fixtures on it; tests/run.sh skips a
+  # fixture marked with a newer `// min-openscad:`. Not a required check.
+  compat-2021:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install OpenSCAD 2021.01
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq openscad
+          openscad --version 2>&1 | grep "OpenSCAD version 2021.01"
+
+      - name: Install just
+        uses: extractions/setup-just@v4
+
+      - name: Evaluate the examples
+        run: just examples
 
       - name: Run the tests
         run: just test
