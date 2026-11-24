@@ -8,8 +8,10 @@
           given after `images` draw only the matching rows
 
 The blocks resolve `include <DraftSCAD/...>` through a library folder holding only this checkout,
-and OpenSCAD runs with HOME and XDG_DATA_HOME in a temporary folder, so neither a copy installed in
-OpenSCAD's library folder nor a file that exists only there can answer for this one. A page's
+and OpenSCAD runs with HOME and the XDG folders in a temporary folder, so neither a copy installed
+in OpenSCAD's library folder nor a file that exists only there can answer for this one. Fonts
+installed for the user alone are out of sight too; the pictures use the default font, which comes
+from the system. A page's
 blocks that start with `// file: NAME` are written beside each other under those names, so a block
 can include another from the same page. OPENSCAD names the binary.
 """
@@ -19,9 +21,11 @@ import os
 import re
 import shlex
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
+import zlib
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -30,7 +34,7 @@ TABLE = REPO / "scripts/images.tsv"
 OPENSCAD = os.environ.get("OPENSCAD", "openscad")
 DEFAULT_FLAGS = "--camera=0,0,0,0,0,0,0 --viewall --autocenter --projection=o --imgsize=900,500"
 
-FENCE = re.compile(r"(?ms)^```scad\n(.*?)^```[ \t]*$")
+FENCE = re.compile(r"(?ms)^```scad[ \t]*\n(.*?)^```[ \t]*$")
 OPENING = re.compile(r"^([ \t]*)(```|~~~)[ \t]*([^\s`]*)")
 FILE = re.compile(r"\A// file: (\S+)")
 INCLUDES = re.compile(r"(?m)^\s*(?:include|use)\s*<[^>]+>")
@@ -69,16 +73,18 @@ def blocks(page):
 def stray_fences(page):
     """Fences that look like OpenSCAD but are not written as an unindented ```scad, which the
     check would otherwise skip without a word."""
-    stray, inside = [], False
+    stray, opener = [], None
     for n, line in enumerate(page.read_text().splitlines(), 1):
         m = OPENING.match(line)
         if not m:
             continue
-        if inside:
-            inside = False
+        if opener:
+            # Only a fence of the same kind, and no shorter, closes the block.
+            if m.group(2) == opener[:3] and line.strip().startswith(opener) and not m.group(3):
+                opener = None
             continue
-        inside = True
-        indent, info = m.group(1), m.group(3).lower()
+        opener = re.match(r"[ \t]*(`{3,}|~{3,})", line).group(1)
+        indent, info = m.group(1), m.group(3).strip("{}").lower()
         if info in ("scad", "openscad") and (indent or line.rstrip() != "```scad"):
             stray.append(f"{page.relative_to(REPO)}:{n}: write an OpenSCAD block as an unindented ```scad fence")
     return stray
@@ -110,10 +116,55 @@ def draws_something(target, cwd, env, tmp):
     """Problems, or [] when the file draws geometry. An empty drawing is no warning to OpenSCAD:
     its CSG export is blank, and its picture is the background alone."""
     csg = tmp / "draws.csg"
+    csg.unlink(missing_ok=True)
     problems = openscad(["--export-format", "csg", "-o", str(csg), target], cwd, env)
     if not problems and not (csg.is_file() and csg.read_text().strip()):
         problems = ["draws nothing"]
     return problems
+
+
+def png_is_blank(path):
+    """True when every pixel of an 8-bit RGB or RGBA PNG, the kind OpenSCAD writes, is one colour.
+    Geometry that is present but empty, such as cube(0), passes the CSG test above and draws the
+    background alone."""
+    data = path.read_bytes()
+    width, height, depth, kind, _, _, interlace = struct.unpack(">IIBBBBB", data[16:29])
+    if depth != 8 or kind not in (2, 6) or interlace:
+        raise ValueError(f"{path.name}: not an 8-bit, non-interlaced RGB or RGBA PNG")
+    bpp = 3 if kind == 2 else 4
+    idat, pos = b"", 8
+    while pos < len(data):
+        length, tag = struct.unpack(">I4s", data[pos:pos + 8])
+        if tag == b"IDAT":
+            idat += data[pos + 8:pos + 8 + length]
+        pos += 12 + length
+    raw = zlib.decompress(idat)
+    stride = width * bpp
+    prev = bytearray(stride)
+    first = None
+    for y in range(height):
+        f = raw[y * (stride + 1)]
+        line = bytearray(raw[y * (stride + 1) + 1:(y + 1) * (stride + 1)])
+        for i in range(stride):
+            a = line[i - bpp] if i >= bpp else 0
+            b = prev[i]
+            c = prev[i - bpp] if i >= bpp else 0
+            if f == 1:
+                line[i] = (line[i] + a) & 0xFF
+            elif f == 2:
+                line[i] = (line[i] + b) & 0xFF
+            elif f == 3:
+                line[i] = (line[i] + (a + b) // 2) & 0xFF
+            elif f == 4:
+                p = a + b - c
+                pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
+                line[i] = (line[i] + (a if pa <= pb and pa <= pc else b if pb <= pc else c)) & 0xFF
+        if first is None:
+            first = bytes(line[:bpp])
+        if line != first * width:
+            return False
+        prev = line
+    return True
 
 
 def isolated_env(tmp):
@@ -258,13 +309,15 @@ def images(patterns):
                 found = openscad([*shlex.split(flags), "-o", str(out), target], cwd, env)
             if not found and not out.is_file():
                 found = ["wrote no picture"]
+            if not found and png_is_blank(out):
+                found = ["drew a picture of one colour: the block draws nothing visible"]
             if found:
                 failed += 1
                 print(f"FAIL {name}")
                 for p in found:
                     print(f"     {p}")
                 continue
-            # Only a picture that drew something, cleanly, replaces the committed one.
+            # Only a picture of more than one colour, drawn cleanly, replaces the committed one.
             shutil.move(out, IMAGES / f"{name}.png")
             print(f"ok   {name}")
     print(f"{len(rows) - failed} of {len(rows)} picture(s) drawn")

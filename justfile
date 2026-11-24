@@ -22,8 +22,9 @@ docs-check:
     @OPENSCAD={{ openscad }} python3 -I scripts/docs.py check
 
 # Draw the docs pictures listed in scripts/images.tsv, or only those matching the names or globs given
+[positional-arguments]
 images *names:
-    @OPENSCAD={{ openscad }} python3 -I scripts/docs.py images {{ names }}
+    @OPENSCAD={{ openscad }} python3 -I scripts/docs.py images "$@"
 
 # Run the fixtures in tests/ and check what each one produces
 test:
