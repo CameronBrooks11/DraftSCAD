@@ -100,7 +100,7 @@ def write_page(page_blocks, d):
 
 
 def openscad(args, cwd, env):
-    """Run OpenSCAD; return its WARNING and ERROR lines, or the output that says why it failed.
+    """Run OpenSCAD; return its warning lines (see WARNING), or the output that says why it failed.
     Both are needed: 2021.01 exits 0 on some warnings, and every version on a failed assert."""
     try:
         p = subprocess.run([OPENSCAD, "--hardwarnings", *args], cwd=cwd, env=env,
