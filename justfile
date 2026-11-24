@@ -21,7 +21,7 @@ examples:
 docs-check:
     @OPENSCAD={{ openscad }} python3 -I scripts/docs.py check
 
-# Draw the docs pictures listed in scripts/images.tsv, or only the ones named
+# Draw the docs pictures listed in scripts/images.tsv, or only those matching the names or globs given
 images *names:
     @OPENSCAD={{ openscad }} python3 -I scripts/docs.py images {{ names }}
 
