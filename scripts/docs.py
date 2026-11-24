@@ -37,7 +37,7 @@ OPENSCAD = os.environ.get("OPENSCAD", "openscad")
 DEFAULT_FLAGS = "--camera=0,0,0,0,0,0,0 --viewall --autocenter --projection=o --imgsize=900,500"
 
 FENCE = re.compile(r"(?ms)^```scad[ \t]*\n(.*?)^```[ \t]*$")
-OPENING = re.compile(r"^([ \t]*)(```|~~~)[ \t]*([^\s`]*)")
+FENCE_LINE = re.compile(r"^([ \t]*)(`{3,}|~{3,})(.*)$")
 FILE = re.compile(r"\A// file: (\S+)")
 INCLUDES = re.compile(r"(?m)^\s*(?:include|use)\s*<[^>]+>")
 LIBRARY = re.compile(r"(?m)^\s*(?:include|use)\s*<DraftSCAD/")
@@ -77,17 +77,23 @@ def stray_fences(page):
     check would otherwise skip without a word."""
     stray, opener = [], None
     for n, line in enumerate(page.read_text().splitlines(), 1):
-        m = OPENING.match(line)
+        m = FENCE_LINE.match(line)
         if not m:
             continue
+        indent, fence, info = m.group(1), m.group(2), m.group(3).strip()
         if opener:
-            # Only a fence of the same kind, and no shorter, closes the block.
-            if m.group(2) == opener[:3] and line.strip().startswith(opener) and not m.group(3):
+            # Only a bare fence of the same character, and no shorter, closes the block.
+            if fence[0] == opener[0] and len(fence) >= len(opener) and not info:
                 opener = None
             continue
-        opener = re.match(r"[ \t]*(`{3,}|~{3,})", line).group(1)
-        indent, info = m.group(1), m.group(3).strip("{}").lower()
-        if info in ("scad", "openscad") and (indent or line.rstrip() != "```scad"):
+        # A backtick fence's info string has no backtick: ```x``` starts a line of inline code.
+        if fence[0] == "`" and "`" in info:
+            continue
+        opener = fence
+        words = info.split()
+        lang = words[0].strip("{}").lstrip(".").lower() if words else ""
+        # The evaluated form, as FENCE reads it: ```scad, unindented, nothing before or after but spaces after.
+        if lang in ("scad", "openscad") and (indent or fence != "```" or m.group(3).rstrip() != "scad"):
             stray.append(f"{page.relative_to(REPO)}:{n}: write an OpenSCAD block as an unindented ```scad fence")
     return stray
 
@@ -318,8 +324,12 @@ def images(patterns):
                 found = openscad([*shlex.split(flags), "-o", str(out), target], cwd, env)
             if not found and not out.is_file():
                 found = ["wrote no picture"]
-            if not found and png_is_blank(out):
-                found = ["drew a picture of one colour: the block draws nothing visible"]
+            if not found:
+                try:
+                    if png_is_blank(out):
+                        found = ["drew a picture of one colour: the block draws nothing visible"]
+                except (ValueError, IndexError, struct.error, zlib.error) as e:
+                    found = [f"cannot read the picture OpenSCAD wrote: {e}"]
             if found:
                 failed += 1
                 print(f"FAIL {name}")
