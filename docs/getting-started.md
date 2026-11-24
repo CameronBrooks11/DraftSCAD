@@ -73,8 +73,9 @@ Three things to notice:
 
 - The annotations are translated up by 1, above the top of the part. From the top they overlay it.
 - Positions are written in multiples of `DIM_SPACE`, the library's spacing unit, so they follow the drawing scale.
-- `dimensions()` prints the length it is given. To print something else, such as a prefix, units or fewer decimals,
-  pass `text`; see [`dimensions`](reference/lines-and-dimensions.md#dimensions).
+- By default `dimensions()` prints the length it is given. To print something else, such as a prefix, units or fewer
+  decimals, pass a string as `text`, as in `text = "3.33"`; see
+  [`dimensions`](reference/lines-and-dimensions.md#dimensions).
 
 ## View it
 
