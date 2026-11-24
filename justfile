@@ -10,7 +10,8 @@ default:
 check: fmt-check
     @for f in examples/*/*.scad; do \
         echo "$f"; \
-        if {{ openscad }} --hardwarnings --export-format csg -o /dev/null "$f" 2>&1 | grep -E '^(WARNING|ERROR)'; then exit 1; fi; \
+        status=0; out=$({{ openscad }} --hardwarnings --export-format csg -o /dev/null "$f" 2>&1) || status=$?; \
+        if ((status)) || grep -Eq '^(WARNING|ERROR)' <<<"$out"; then echo "$out"; exit 1; fi; \
     done
 
 # Run the fixtures in tests/ and check what each one produces
