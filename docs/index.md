@@ -21,8 +21,8 @@ A DraftSCAD drawing is an ordinary OpenSCAD scene looked at from directly above.
 
 Rotate the camera and the illusion breaks: the annotations float above the parts. Nothing is projected or flattened.
 
-The drawing is the preview (F5). A full render (F6) does not work, because the library mixes 2D text with 3D lines and
-OpenSCAD drops the text. Export the preview as an image; see [Getting started](getting-started.md#export-the-drawing).
+The drawing is the preview (F5). A full render (F6) keeps every line and label too, but it is slower and looks the same
+from above. Export the preview as an image; see [Getting started](getting-started.md#export-the-drawing).
 
 ## Where to go next
 

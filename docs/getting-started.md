@@ -77,7 +77,7 @@ Three things to notice:
 
 ## View it
 
-1. Preview with **F5**. Do not render with F6: the text disappears.
+1. Preview with **F5**. A render (F6) is slower and looks the same from above.
 2. **View → Top**.
 3. **View → Orthogonal**.
 
@@ -94,7 +94,9 @@ openscad -o drawing.png --camera=0,0,0,0,0,0,0 --viewall --autocenter --projecti
 `--camera=0,0,0,0,0,0,0` looks straight down, `--projection=o` is orthogonal, and `--viewall --autocenter` fit the
 scene to the image.
 
-There is no vector output. SVG, DXF and PDF export need a 2D scene, and a DraftSCAD drawing is 3D.
+There is no usable vector output. SVG, DXF and PDF export need a 2D scene, and a DraftSCAD drawing is 3D.
+`projection()` flattens it, but into filled shapes: a part becomes a solid outline, and any line or label drawn over it,
+or over a filled title block, merges into that outline.
 
 ## Scale
 

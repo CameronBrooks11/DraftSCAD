@@ -33,9 +33,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Dimension labels overlapped arrows and the dimension line, most visibly at a large `SCALING_FACTOR` (#2).
 - `dimensions()` with `DIM_CENTER` produced negative-size geometry when the label did not fit. It now draws the
   outside-arrows form (#2).
-- The labels of `dimensions()`, `leader_line()` and `titleblock()` were 2D beside 3D lines, so a render, an STL
-  export or `projection()` dropped them with a warning. They are now extruded to the height of the lines, and look
-  the same in preview. On OpenSCAD 2021.01, rendering a drawing with many labels is slow (#39).
+- The labels of `dimensions()`, `leader_line()` and `titleblock()` were 2D beside 3D lines, so a render (F6) or an
+  STL export dropped them with a warning. They are now extruded to the height of the lines, and look the same from
+  above. On OpenSCAD 2021.01, rendering a drawing with many labels can take minutes (#39).
 
 ## [0.1.0] - 2026-11-10
 
