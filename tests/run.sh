@@ -6,15 +6,33 @@
 # in the fixture matches nothing in the output, or when a line
 #   // reject: REGEX
 # matches something. The output searched is the CSG export plus the console messages.
+#
+# A fixture with a line
+#   // min-openscad: VERSION
+# is skipped, and reported as skipped, on an older OpenSCAD.
 set -euo pipefail
 
 openscad=${OPENSCAD:-openscad}
 dir=$(cd "$(dirname "$0")" && pwd)
 failed=0
+skipped=0
+
+version=$("$openscad" --version 2>&1 | sed -n 's/^OpenSCAD version //p') || true
+if [[ -z $version ]]; then
+    echo "could not read the version from $openscad --version"
+    exit 1
+fi
 
 for fixture in "$dir"/*.scad; do
     name=$(basename "$fixture")
     problems=()
+
+    min=$(sed -n 's|^// min-openscad: ||p' "$fixture")
+    if [[ -n $min && $(printf '%s\n' "$min" "$version" | sort -V | head -n1) != "$min" ]]; then
+        skipped=$((skipped + 1))
+        echo "skip $name (needs OpenSCAD $min, have $version)"
+        continue
+    fi
 
     # A failed assert still exits 0, so the output is read as well as the exit status.
     status=0
@@ -41,6 +59,9 @@ for fixture in "$dir"/*.scad; do
     fi
 done
 
+if ((skipped)); then
+    echo "$skipped fixture(s) skipped"
+fi
 if ((failed)); then
     echo "$failed fixture(s) failed"
     exit 1
