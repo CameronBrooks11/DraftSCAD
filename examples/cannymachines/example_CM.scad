@@ -64,7 +64,7 @@ translate([0, 0, -DIM_LINE_WIDTH])
     draw_sheet(length=sheet_len, height=sheet_height, grid_type="Dot", grid_dim=0.5);
 
 color(DEF_TEXT_COLOR) translate([grid_space * 10, grid_space * 1.5, 0])
-        text(
-            text=str("Grid Scale: ", grid_space, " mm"), size=grid_space / 2, valign="center", halign="left",
-            font="Liberation Sans:style=Bold Italic"
-        );
+        linear_extrude(height=DIM_LINE_HEIGHT) text(
+                text=str("Grid Scale: ", grid_space, " mm"), size=grid_space / 2, valign="center", halign="left",
+                font="Liberation Sans:style=Bold Italic"
+            );
