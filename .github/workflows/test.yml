@@ -68,8 +68,9 @@ jobs:
         run: just test
 
   # The library also supports OpenSCAD 2021.01, the build Debian and Ubuntu ship.
-  # This evaluates the examples and runs the fixtures on it; tests/run.sh skips a
-  # fixture marked with a newer `// min-openscad:`. Not a required check.
+  # This evaluates the examples and the docs' code on it and runs the fixtures;
+  # tests/run.sh skips a fixture marked with a newer `// min-openscad:`. Not a
+  # required check.
   compat-2021:
     runs-on: ubuntu-24.04
     steps:
@@ -86,6 +87,9 @@ jobs:
 
       - name: Evaluate the examples
         run: just examples
+
+      - name: Check the docs' code
+        run: just docs-check
 
       - name: Run the tests
         run: just test

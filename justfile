@@ -6,8 +6,8 @@ openscad := env("OPENSCAD", "openscad")
 default:
     @just --list
 
-# Check formatting, then evaluate every example and fail on the first warning
-check: fmt-check examples
+# Check formatting, then evaluate every example and the docs' code, failing on a warning
+check: fmt-check examples docs-check
 
 # Evaluate every example and fail on the first warning
 examples:
@@ -16,6 +16,15 @@ examples:
         status=0; out=$({{ openscad }} --hardwarnings --export-format csg -o /dev/null "$f" 2>&1) || status=$?; \
         if ((status)) || grep -Eq '^(WARNING|ERROR)' <<<"$out"; then echo "$out"; exit 1; fi; \
     done
+
+# Evaluate the scad blocks in README.md and docs/, and check scripts/images.tsv
+docs-check:
+    @OPENSCAD={{ openscad }} python3 -I scripts/docs.py check
+
+# Draw the docs pictures listed in scripts/images.tsv, or only those matching the names or globs given
+[positional-arguments]
+images *names:
+    @OPENSCAD={{ openscad }} python3 -I scripts/docs.py images "$@"
 
 # Run the fixtures in tests/ and check what each one produces
 test:
