@@ -8,16 +8,41 @@
  * @copyright (c) 2021 Don Smiley, (c) 2025 Cameron K. Brooks
  */
 
+// Advances in the default font at text size 10, measured with textmetrics() on OpenSCAD 2026.10.15, for the
+// printable ASCII characters that are not as wide as a digit. A digit, and every character not listed, is 7.724.
+DD_CHAR_ADVANCE = [
+    ["'", 2.652],
+    ["ijl", 3.086],
+    ["|", 3.608],
+    [" !,./:;I[\\]ft", 3.859],
+    ["()-`r", 4.625],
+    ["{}", 4.639],
+    ["\"", 4.93],
+    ["*", 5.405],
+    ["^", 6.517],
+    ["Jcksvxyz", 6.944],
+    ["+<=>~", 8.111],
+    ["FTZ", 8.484],
+    ["&ABEKPSVXY", 9.264],
+    ["CDHNRUw", 10.03],
+    ["GOQ", 10.803],
+    ["Mm", 11.57],
+    ["%", 12.35],
+    ["W", 13.109],
+    ["@", 14.099],
+];
+
+function dd_char_units(c) = let (w = [for (g = DD_CHAR_ADVANCE) if (len(search(c, g[0])) > 0) g[1]]) len(w) > 0 ? w[0] : 7.724;
+
 /*
  * dd_text_units(text)
  * Estimates the width of a label in font units, at OpenSCAD's default text size of 10.
  * Multiply by DIM_FONTSCALE for the width as drawn.
- * In the default font every digit advances 7.724 units and a period or a space 3.859, so the estimate is
- * exact for a number. Letters and other fonts differ: "R" advances 10.03 and "M" 11.57.
+ * Each printable ASCII character counts its advance in the default font, so the estimate is exact for an ASCII
+ * label unless the font kerns a pair, as in "AV", where it comes out slightly wide. Any other character counts
+ * as a digit, 7.724.
  */
-function dd_text_units(text, i = 0) =
-    i >= len(text) ? 0
-    : ( (text[i] == "." || text[i] == " ") ? 3.859 : 7.724) + dd_text_units(text, i + 1);
+function dd_text_units(text, i = 0) = i >= len(text) ? 0 : dd_char_units(text[i]) + dd_text_units(text, i + 1);
 
 /*
  * arrow(arr_points, arr_length, height, color)
@@ -126,7 +151,7 @@ module circle_center(
 }
 
 /*
- * dimensions(length, line_width, loc, color, text_color)
+ * dimensions(length, line_width, loc, color, text_color, text)
  * Adds dimension lines and labels for a given length.
  * Parameters:
  * - length: Distance to dimension.
@@ -134,6 +159,7 @@ module circle_center(
  * - loc: Position of the dimension text (e.g., DIM_CENTER, DIM_LEFT).
  * - color: Color of the dimension lines.
  * - text_color: Color of the text label.
+ * - text: The label. Optional; with none, the label is str(length).
  */
 module dimensions(
     length,
@@ -141,10 +167,11 @@ module dimensions(
     line_height = DIM_LINE_HEIGHT,
     loc = DIM_CENTER,
     color = DEF_LINE_COLOR,
-    text_color = DEF_TEXT_COLOR
+    text_color = DEF_TEXT_COLOR,
+    text = undef
 ) {
-    text = str(length);
-    text_width = dd_text_units(text) * DIM_FONTSCALE;
+    label = is_undef(text) ? str(length) : text;
+    text_width = dd_text_units(label) * DIM_FONTSCALE;
     pad = DIM_FONTSCALE * 3; // clear space on each side of a label set into the line
     gap = text_width + pad * 2; // break in the line for a centred label
     label_gap = DIM_FONTSCALE * 5; // distance from an arrow to a label beside it
@@ -167,19 +194,19 @@ module dimensions(
                 );
 
         color(text_color) translate([length / 2, -DIM_FONTSCALE * 3, 0])
-                scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(text, halign="center");
+                scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(label, halign="center");
     } else if (loc == DIM_LEFT) {
         color(color)
             line(length=length, width=line_width, height=line_height, left_arrow=true, right_arrow=true);
 
         color(text_color) translate([-label_gap, -DIM_FONTSCALE * 3, 0])
-                scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(text, halign="right");
+                scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(label, halign="right");
     } else if (loc == DIM_RIGHT) {
         color(color)
             line(length=length, width=line_width, height=line_height, left_arrow=true, right_arrow=true);
 
         color(text_color) translate([length + label_gap, -DIM_FONTSCALE * 3, 0])
-                scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(text);
+                scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(label);
     } else if (loc == DIM_OUTSIDE || loc == DIM_CENTER) {
         // Also the fallback for a centred label that does not fit.
         color(color) rotate([0, 180, 0])
@@ -195,11 +222,11 @@ module dimensions(
 
         if (gap <= length) {
             color(text_color) translate([length / 2, -DIM_FONTSCALE * 3, 0])
-                    scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(text, halign="center");
+                    scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(label, halign="center");
         } else {
             // no room between the arrows: put the label past the right-hand one
             color(text_color) translate([length + outside_length + label_gap, -DIM_FONTSCALE * 3, 0])
-                    scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(text);
+                    scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(label);
         }
     }
 }

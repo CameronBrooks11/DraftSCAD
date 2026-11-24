@@ -11,8 +11,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The `TEXT_SIZE` override, read as `DIM_TEXT_SIZE`. It sets the height of dimension and leader labels without
   changing the line width. The default is unchanged at 7 line widths (#2).
 - `dd_text_units()`, which estimates the width of a label. It is exact for numbers in the default font (#2).
+- `dimensions(text = ...)`, a custom label in place of `str(length)`, for a prefix, units, a tolerance or a set
+  precision. Without it the label is unchanged (#26).
 
 ### Changed
+
+- `dd_text_units()` counts each printable ASCII character at its own advance in the default font, not as a digit, so
+  a dimension label with letters gets the room it needs, and so does the circle of a `leader_line(do_circle = true)`
+  label with letters. Numbers are unchanged (#26).
 
 - `dimensions()` centres its label in the break in the line, and sizes the break from the label's estimated width.
   Labels sit slightly differently from 0.1.0 (#2).
