@@ -21,7 +21,7 @@ translate([0, 0, DOC_HEIGHT - DIM_LINE_WIDTH])
 translate([875, 254, DOC_HEIGHT]) titleblock1();
 
 color(DEF_TEXT_COLOR) translate([DIM_GRID_SPACING * 6, DIM_GRID_SPACING * 1.5, 0])
-        text(
-            text=str("Grid Scale: ", DIM_GRID_SPACING, " mm"), size=20, valign="center", halign="left",
-            font="Liberation Sans:style=Bold Italic"
-        );
+        linear_extrude(height=DIM_LINE_HEIGHT) text(
+                text=str("Grid Scale: ", DIM_GRID_SPACING, " mm"), size=20, valign="center", halign="left",
+                font="Liberation Sans:style=Bold Italic"
+            );

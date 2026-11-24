@@ -194,19 +194,19 @@ module dimensions(
                 );
 
         color(text_color) translate([length / 2, -DIM_FONTSCALE * 3, 0])
-                scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(label, halign="center");
+                linear_extrude(height=line_height) scale([DIM_FONTSCALE, DIM_FONTSCALE]) text(label, halign="center");
     } else if (loc == DIM_LEFT) {
         color(color)
             line(length=length, width=line_width, height=line_height, left_arrow=true, right_arrow=true);
 
         color(text_color) translate([-label_gap, -DIM_FONTSCALE * 3, 0])
-                scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(label, halign="right");
+                linear_extrude(height=line_height) scale([DIM_FONTSCALE, DIM_FONTSCALE]) text(label, halign="right");
     } else if (loc == DIM_RIGHT) {
         color(color)
             line(length=length, width=line_width, height=line_height, left_arrow=true, right_arrow=true);
 
         color(text_color) translate([length + label_gap, -DIM_FONTSCALE * 3, 0])
-                scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(label);
+                linear_extrude(height=line_height) scale([DIM_FONTSCALE, DIM_FONTSCALE]) text(label);
     } else if (loc == DIM_OUTSIDE || loc == DIM_CENTER) {
         // Also the fallback for a centred label that does not fit.
         color(color) rotate([0, 180, 0])
@@ -222,11 +222,11 @@ module dimensions(
 
         if (gap <= length) {
             color(text_color) translate([length / 2, -DIM_FONTSCALE * 3, 0])
-                    scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(label, halign="center");
+                    linear_extrude(height=line_height) scale([DIM_FONTSCALE, DIM_FONTSCALE]) text(label, halign="center");
         } else {
             // no room between the arrows: put the label past the right-hand one
             color(text_color) translate([length + outside_length + label_gap, -DIM_FONTSCALE * 3, 0])
-                    scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(label);
+                    linear_extrude(height=line_height) scale([DIM_FONTSCALE, DIM_FONTSCALE]) text(label);
         }
     }
 }
@@ -274,7 +274,7 @@ module leader_line(
 
                         if (len(text) > 0)
                             color(text_color) translate([(horz_length + space), -DIM_FONTSCALE * 3, 0])
-                                    scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(text);
+                                    linear_extrude(height=line_height) scale([DIM_FONTSCALE, DIM_FONTSCALE]) text(text);
                     } else {
                         color(color) translate([-horz_length, 0, 0])
                                 line(
@@ -283,7 +283,7 @@ module leader_line(
                                 );
                         if (len(text) > 0)
                             color(text_color) translate([-(horz_length + space), -DIM_FONTSCALE * 3, 0])
-                                    scale([DIM_FONTSCALE, DIM_FONTSCALE, DIM_FONTSCALE]) text(text, halign="right");
+                                    linear_extrude(height=line_height) scale([DIM_FONTSCALE, DIM_FONTSCALE]) text(text, halign="right");
                     }
 
                     if (do_circle) {

@@ -44,9 +44,9 @@ module titleblock(lines, descs, details, color = DEF_LINE_COLOR, text_color = DE
         {
             translate([line[0] * DIM_LINE_WIDTH, line[1] * DIM_LINE_WIDTH, 0]) if (line[2] == DIM_VERT) {
                 rotate([0, 0, 90])
-                    scale([DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4]]) text(line[3]);
+                    linear_extrude(height=DIM_LINE_HEIGHT) scale([DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4]]) text(line[3]);
             } else {
-                scale([DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4]]) text(line[3]);
+                linear_extrude(height=DIM_LINE_HEIGHT) scale([DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4]]) text(line[3]);
             }
         }
 
@@ -54,9 +54,9 @@ module titleblock(lines, descs, details, color = DEF_LINE_COLOR, text_color = DE
         {
             translate([line[0] * DIM_LINE_WIDTH, line[1] * DIM_LINE_WIDTH, 0]) if (line[2] == DIM_VERT) {
                 rotate([0, 0, 90])
-                    scale([DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4]]) text(line[3]);
+                    linear_extrude(height=DIM_LINE_HEIGHT) scale([DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4]]) text(line[3]);
             } else {
-                scale([DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4]]) text(line[3]);
+                linear_extrude(height=DIM_LINE_HEIGHT) scale([DIM_FONTSCALE * line[4], DIM_FONTSCALE * line[4]]) text(line[3]);
             }
         }
     }
