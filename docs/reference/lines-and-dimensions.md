@@ -62,15 +62,16 @@ Draws one arrowhead with its tip at the origin, pointing toward −X. `line()` u
 
 ```scad
 dimensions(length, line_width = DIM_LINE_WIDTH, line_height = DIM_LINE_HEIGHT, loc = DIM_CENTER,
-           color = DEF_LINE_COLOR, text_color = DEF_TEXT_COLOR)
+           color = DEF_LINE_COLOR, text_color = DEF_TEXT_COLOR, text = undef)
 ```
 
-Draws a dimension line from the origin along +X, `length` long, labelled with `length`.
+Draws a dimension line from the origin along +X, `length` long, labelled with `length` or with `text`.
 
-| Parameter | Meaning                                         |
-| --------- | ----------------------------------------------- |
-| `length`  | The distance to dimension, and the label        |
-| `loc`     | Where the label goes; see below                 |
+| Parameter | Meaning                                                              |
+| --------- | -------------------------------------------------------------------- |
+| `length`  | The distance to dimension                                            |
+| `loc`     | Where the label goes; see below                                      |
+| `text`    | The label; leave it out to label the dimension with `str(length)`    |
 
 | `loc`         | Result                                                                        |
 | ------------- | ----------------------------------------------------------------------------- |
@@ -102,10 +103,13 @@ for (i = [0:3])
 
 Things to know:
 
-- The label is always `str(length)`. There is no way to add a prefix, a tolerance or units, or to set the precision.
+- Pass `text` to add a prefix, a tolerance or units, or to set the precision: `dimensions(10 / 3, text = "3.33")`.
+  In a view drawn at a scale, it also lets the label show the true size.
 - A dimension is always horizontal. For a vertical one, wrap it in `rotate([ 0, 0, 90 ])`; the label rotates with it.
 - The module does not draw extension lines. Draw those with `line()`.
-- The room a label needs comes from `dd_text_units()`, an estimate that is exact for numbers in the default font.
+- The room a label needs comes from `dd_text_units()`, which is exact for most ASCII labels in the default font. A
+  character outside printable ASCII, such as `Ø` or `±`, is counted as a digit, so a label with one may sit a little
+  closer to the line.
 
 ## dd_text_units
 
@@ -116,9 +120,10 @@ dd_text_units(text)
 A function. It estimates the width of a string in font units, at OpenSCAD's default text size of 10. Multiply by
 `DIM_FONTSCALE` for the width as drawn.
 
-It counts 7.724 for every character except a period or a space, which count 3.859. Those are the advances of the
-digits, the period and the space in the default font, so the result is exact for a number: `dd_text_units("3.53")`
-is 27.031. It is only approximate for letters, which vary in width, and for any other font.
+Each printable ASCII character counts its advance in the default font, measured with `textmetrics()`: 7.724 for a
+digit, 3.859 for a period or a space, 10.03 for `R`. So the result is exact for a number, `dd_text_units("3.53")`
+is 27.031, and for most other ASCII labels. It comes out slightly wide where the font kerns a pair, as in `AV`. Any
+other character counts 7.724, the width of a digit, and other fonts are not measured.
 
 The library estimates the width and does not call `textmetrics()`, so it needs nothing newer than OpenSCAD 2021.01.
 
