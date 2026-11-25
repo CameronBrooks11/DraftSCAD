@@ -6,8 +6,9 @@
 # It evaluates the file with a CSG export, then builds its geometry with an STL export, on the
 # Manifold backend. Some warnings only appear there, such as an import() of a missing file, or 2D
 # mixed with 3D; a 2D file's geometry is built before the STL export turns it down. OpenSCAD
-# 2021.01 has only CGAL, which takes minutes on extruded text, so on 2021 the file is evaluated
-# only. Any other version without the Manifold backend fails, rather than skip the build unseen.
+# 2021.x has only CGAL, which takes minutes on extruded text, so on any 2021.x the file is evaluated
+# only. Any other version whose --help does not list --backend fails, rather than skip the build
+# unseen. tests/scad-check.test.sh tests this script against a fake OpenSCAD.
 #
 # A warning is a line starting with WARNING, ERROR, DEPRECATED, or a word joined to -WARNING or
 # -ERROR, such as FONT-WARNING; the TRACE lines after it say where it came from. The exit status
