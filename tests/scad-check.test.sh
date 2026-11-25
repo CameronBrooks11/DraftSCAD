@@ -72,21 +72,40 @@ case_ "a DEPRECATED line fails" 1 FAKE_CSG_OUT="DEPRECATED: x\n"
 case_ "a FONT-WARNING fails" 1 FAKE_STL_OUT="FONT-WARNING: x\n"
 case_ "an EXPORT-ERROR fails" 1 FAKE_STL_OUT="EXPORT-ERROR: x\n"
 case_ "an ECHO mentioning WARNING passes" 0 FAKE_CSG_OUT="ECHO: \"WARNING\"\n"
+case_ "an ECHO mentioning DEPRECATED passes" 0 FAKE_CSG_OUT="ECHO: \"DEPRECATED\"\n"
 case_ "a snapshot without --backend fails" 1 FAKE_HELP='Usage: openscad\n'
 case_ "an unknown version without --backend fails" 1 FAKE_VERSION='' FAKE_HELP='Usage: openscad\n'
 
-# fail_unless_logged NAME PATTERN: the last case's calls to the fake include one matching PATTERN.
-fail_unless_logged() {
-    if ! grep -q -- "$2" "$tmp/log"; then
+# fail_unless_called NAME CALL: the last case called the fake with exactly CALL, as one whole line.
+fail_unless_called() {
+    if ! grep -Fxq -- "$2" "$tmp/log"; then
         failed=$((failed + 1))
-        echo "FAIL $1: no call matched $2"
+        echo "FAIL $1: no call was exactly: $2"
     fi
 }
 
-# The calls a clean file makes: both runs with --hardwarnings, the STL run on Manifold.
+# fail_unless_printed NAME TEXT: the last case's output from scad-check.sh contains TEXT.
+fail_unless_printed() {
+    if ! grep -Fq -- "$2" "$tmp/out"; then
+        failed=$((failed + 1))
+        echo "FAIL $1: the output does not contain: $2"
+    fi
+}
+
+# The calls a clean file makes, whole: both runs with --hardwarnings into /dev/null on the file, the
+# STL run on Manifold.
 case_ "a clean file, its calls" 0
-fail_unless_logged "the CSG run uses --hardwarnings" '^--hardwarnings --export-format csg'
-fail_unless_logged "the STL run uses --hardwarnings and Manifold" '^--hardwarnings --backend=manifold --export-format binstl'
+fail_unless_called "the CSG run" "--hardwarnings --export-format csg -o /dev/null $tmp/x.scad"
+fail_unless_called "the STL run" "--hardwarnings --backend=manifold --export-format binstl -o /dev/null $tmp/x.scad"
+
+# What a failure prints: the exit status, OpenSCAD's own lines, and why the geometry was not built.
+case_ "a crash, its message" 1 FAKE_STL_OUT="Segmentation fault\n" FAKE_STL_EXIT=139
+fail_unless_printed "a crash prints its exit status" "exited 139"
+fail_unless_printed "a crash prints OpenSCAD's output" "Segmentation fault"
+case_ "exit 2, its message" 1 FAKE_STL_OUT="$empty\n" FAKE_STL_EXIT=2
+fail_unless_printed "exit 2 prints its exit status" "exited 2"
+case_ "no --backend, its message" 1 FAKE_HELP='Usage: openscad\n'
+fail_unless_printed "no --backend says so" "has no --backend, so the geometry cannot be built"
 
 # A warning is printed with the TRACE lines after it.
 case_ "a warning with its trace" 1 FAKE_CSG_OUT="WARNING: x\nTRACE: called by y\n"
@@ -107,6 +126,6 @@ for v in 2021.01 2021.06; do
 done
 
 if ((failed)); then
-    echo "$failed scad-check case(s) failed"
+    echo "$failed scad-check check(s) failed"
     exit 1
 fi
