@@ -6,17 +6,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-25
+
 ### Changed
 
 - `titleblock0()`, `revblock0()` and `titleblock1()` take `fill` as `true` or `false` only. Any other value, such as
   the string `"true"` the reference used to show for `titleblock0()`, or `0` and `1`, which worked before, now stops
-  with an `assert`.
+  with an `assert` (#58).
 
 ### Fixed
 
 - `titleblock0()` took `fill` as the string `"true"` by default, so `fill = "false"`, as its documented signature
   suggested, still drew the white slab, as it did in `revblock0()` and `titleblock1()`. `fill` defaults to `true` in
-  every template.
+  every template (#58).
 
 ## [0.2.0] - 2026-11-25
 
@@ -158,6 +160,7 @@ Rebuilt from the commit log. These changes predate the first tag and are all par
 
 - Imported from [pwpearson/dimensional-drawings](https://github.com/pwpearson/dimensional-drawings).
 
-[Unreleased]: https://github.com/CameronBrooks11/DraftSCAD/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/CameronBrooks11/DraftSCAD/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/CameronBrooks11/DraftSCAD/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/CameronBrooks11/DraftSCAD/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/CameronBrooks11/DraftSCAD/releases/tag/v0.1.0
