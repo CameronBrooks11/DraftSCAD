@@ -159,7 +159,7 @@ module circle_center(
  * - loc: Position of the dimension text (e.g., DIM_CENTER, DIM_LEFT).
  * - color: Color of the dimension lines.
  * - text_color: Color of the text label.
- * - text: The label, a string or a number. Optional; with none, the label is str(length).
+ * - text: The label, a string or a number (written as str() writes it). Optional; with none, the label is str(length).
  */
 module dimensions(
     length,
@@ -170,6 +170,7 @@ module dimensions(
     text_color = DEF_TEXT_COLOR,
     text = undef
 ) {
+    assert(is_undef(text) || is_string(text) || is_num(text), str("dimensions(): text must be a string or a number, not ", text));
     label = str(is_undef(text) ? length : text);
     text_width = dd_text_units(label) * DIM_FONTSCALE;
     pad = DIM_FONTSCALE * 3; // clear space on each side of a label set into the line
@@ -258,7 +259,8 @@ module leader_line(
     color = DEF_LINE_COLOR,
     text_color = DEF_TEXT_COLOR
 ) {
-    label = str(text);
+    assert(is_undef(text) || is_string(text) || is_num(text), str("leader_line(): text must be a string or a number, not ", text));
+    label = is_undef(text) ? "" : str(text);
     text_width = dd_text_units(label) * DIM_FONTSCALE;
     space = DIM_FONTSCALE * 6;
 
