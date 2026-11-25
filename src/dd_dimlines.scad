@@ -159,7 +159,8 @@ module circle_center(
  * - loc: Position of the dimension text (e.g., DIM_CENTER, DIM_LEFT).
  * - color: Color of the dimension lines.
  * - text_color: Color of the text label.
- * - text: The label, a string or a number (written as str() writes it). Optional; with none, the label is str(length).
+ * - text: The label, a string or a finite number (written as str() writes it). Optional; with none, the label is
+ *   str(length). An empty string leaves the line unbroken.
  */
 module dimensions(
     length,
@@ -173,11 +174,11 @@ module dimensions(
     // An assert inside the expression runs before label is used; an assert statement would run after the
     // module's assignments, too late to stop dd_text_units() on a bad value.
     label =
-        assert(is_undef(text) || is_string(text) || is_num(text), "dimensions(): text must be a string or a number")
+        assert(is_undef(text) || is_string(text) || (is_num(text) && abs(text) < 1 / 0), "dimensions(): text must be a string or a finite number")
         str(is_undef(text) ? length : text);
     text_width = dd_text_units(label) * DIM_FONTSCALE;
     pad = DIM_FONTSCALE * 3; // clear space on each side of a label set into the line
-    gap = text_width + pad * 2; // break in the line for a centred label
+    gap = len(label) > 0 ? text_width + pad * 2 : 0; // break in the line for a centred label; none for an empty one
     label_gap = DIM_FONTSCALE * 5; // distance from an arrow to a label beside it
     arrowhead = line_width * 4; // length of an arrowhead, tip to barbs
 
@@ -244,7 +245,7 @@ module dimensions(
  * - horz_length: Length of the horizontal line portion.
  * - direction: Direction of the horizontal line (DIM_RIGHT or DIM_LEFT).
  * - line_width: Thickness of the line.
- * - text: Text annotation for the leader, a string or a number. Optional; with none, only the line is drawn.
+ * - text: Text annotation for the leader, a string or a finite number. Optional; with none, only the line is drawn.
  * - do_circle: Boolean to include a circle around the annotation.
  * - color: Color of the lines.
  * - text_color: Color of the annotation text.
@@ -263,7 +264,7 @@ module leader_line(
     text_color = DEF_TEXT_COLOR
 ) {
     label =
-        assert(is_undef(text) || is_string(text) || is_num(text), "leader_line(): text must be a string or a number")
+        assert(is_undef(text) || is_string(text) || (is_num(text) && abs(text) < 1 / 0), "leader_line(): text must be a string or a finite number")
         is_undef(text) ? "" : str(text);
     text_width = dd_text_units(label) * DIM_FONTSCALE;
     space = DIM_FONTSCALE * 6;

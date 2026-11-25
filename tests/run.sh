@@ -7,6 +7,12 @@
 #   // reject: REGEX
 # matches something. The output searched is the CSG export plus the console messages.
 #
+# A fixture with lines
+#   // expect-error: REGEX
+# must instead fail scripts/scad-check.sh, with every REGEX matching what it reported: a test for
+# an assert. Keep one such call to a fixture: OpenSCAD stops at the first failed assert, so a second
+# is never reached.
+#
 # A fixture with a line
 #   // min-openscad: VERSION
 # is skipped, and reported as skipped, on an older OpenSCAD.
@@ -41,7 +47,15 @@ for fixture in "$dir"/*.scad; do
         continue
     fi
 
-    if ! found=$(OPENSCAD=$openscad bash "$dir/../scripts/scad-check.sh" "$fixture"); then
+    status=0
+    found=$(OPENSCAD=$openscad bash "$dir/../scripts/scad-check.sh" "$fixture") || status=$?
+    errors=$(sed -n 's|^// expect-error: ||p' "$fixture")
+    if [[ -n $errors ]]; then
+        ((status)) || problems+=("expected an error, but OpenSCAD reported none")
+        while IFS= read -r pattern; do
+            grep -Eq -- "$pattern" <<<"$found" || problems+=("expected error not found: $pattern")
+        done <<<"$errors"
+    elif ((status)); then
         problems+=("OpenSCAD reported a warning or error")
         while IFS= read -r line; do problems+=("  $line"); done <<<"$found"
     fi
