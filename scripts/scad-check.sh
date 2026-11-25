@@ -20,7 +20,8 @@ file=${1:?usage: scad-check.sh FILE}
 warning='^([A-Z]+-)?(WARNING|ERROR)|^DEPRECATED'
 
 # Runs OpenSCAD and prints the warnings with their TRACE lines, or the output when it failed without
-# one. A non-zero exit is allowed when its output has a line matching $2.
+# one. Exit status 1 is allowed when the output has a line matching $1; any other failure, such as a
+# crash, is not.
 run() {
     local allowed=$1 status=0 out
     shift
@@ -29,7 +30,7 @@ run() {
         grep -E "$warning|^TRACE:" <<<"$out"
         return 1
     fi
-    if ((status)) && ! { [[ -n $allowed ]] && grep -Eq "$allowed" <<<"$out"; }; then
+    if ((status)) && ! { ((status == 1)) && [[ -n $allowed ]] && grep -Eq "$allowed" <<<"$out"; }; then
         echo "$openscad exited $status"
         grep -v '^[[:space:]]*$' <<<"$out" | head -n 8
         return 1
@@ -47,5 +48,5 @@ if [[ $help != *--backend* ]]; then
     echo "OpenSCAD ${version:-of unknown version} has no --backend, so the geometry cannot be built"
     exit 1
 fi
-run '^Current top level object is (empty|not a 3D object)\.$' \
+run $'^Current top level object is (empty|not a 3D object)\\.\r?$' \
     --backend=manifold --export-format binstl -o /dev/null "$file" || exit 1
