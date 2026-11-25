@@ -172,8 +172,8 @@ leader_line(angle = -45, radius = radius, angle_length = 1, horz_length = 0.25, 
 ![Three leader lines around a hole centre: one to the right, one to the left, and one ending in a circled number](../assets/images/leader_line.png)
 
 The circle is centred on the label across its width, with the label sitting a little above the centre, and its edge
-meets the end of the shoulder line. Its size comes from `dd_text_units()`, so it fits a digit, a capital letter or any
-label of two or more characters; a single narrow, tall character such as `l`, `i` or `I` touches the circle.
+meets the end of the shoulder line. Its size comes from `dd_text_units()`, so it fits a digit, any capital but `I`, or
+any label of two or more characters; a single narrow character such as `l`, `i`, `I` or `|` touches the circle.
 
 ## circle_center
 
