@@ -159,7 +159,7 @@ module circle_center(
  * - loc: Position of the dimension text (e.g., DIM_CENTER, DIM_LEFT).
  * - color: Color of the dimension lines.
  * - text_color: Color of the text label.
- * - text: The label. Optional; with none, the label is str(length).
+ * - text: The label, a string or a number (written as str() writes it). Optional; with none, the label is str(length).
  */
 module dimensions(
     length,
@@ -170,7 +170,11 @@ module dimensions(
     text_color = DEF_TEXT_COLOR,
     text = undef
 ) {
-    label = is_undef(text) ? str(length) : text;
+    // An assert inside the expression runs before label is used; an assert statement would run after the
+    // module's assignments, too late to stop dd_text_units() on a bad value.
+    label =
+        assert(is_undef(text) || is_string(text) || is_num(text), "dimensions(): text must be a string or a number")
+        str(is_undef(text) ? length : text);
     text_width = dd_text_units(label) * DIM_FONTSCALE;
     pad = DIM_FONTSCALE * 3; // clear space on each side of a label set into the line
     gap = text_width + pad * 2; // break in the line for a centred label
@@ -240,7 +244,7 @@ module dimensions(
  * - horz_length: Length of the horizontal line portion.
  * - direction: Direction of the horizontal line (DIM_RIGHT or DIM_LEFT).
  * - line_width: Thickness of the line.
- * - text: Text annotation for the leader. Optional; with none, only the line is drawn.
+ * - text: Text annotation for the leader, a string or a number. Optional; with none, only the line is drawn.
  * - do_circle: Boolean to include a circle around the annotation.
  * - color: Color of the lines.
  * - text_color: Color of the annotation text.
@@ -258,8 +262,10 @@ module leader_line(
     color = DEF_LINE_COLOR,
     text_color = DEF_TEXT_COLOR
 ) {
-
-    text_width = dd_text_units(text) * DIM_FONTSCALE;
+    label =
+        assert(is_undef(text) || is_string(text) || is_num(text), "leader_line(): text must be a string or a number")
+        is_undef(text) ? "" : str(text);
+    text_width = dd_text_units(label) * DIM_FONTSCALE;
     space = DIM_FONTSCALE * 6;
 
     color(color) rotate([0, 0, angle]) translate([radius, 0, 0])
@@ -272,18 +278,18 @@ module leader_line(
                                 right_arrow=false
                             );
 
-                        if (len(text) > 0)
+                        if (len(label) > 0)
                             color(text_color) translate([(horz_length + space), -DIM_FONTSCALE * 3, 0])
-                                    linear_extrude(height=line_height) scale([DIM_FONTSCALE, DIM_FONTSCALE]) text(text);
+                                    linear_extrude(height=line_height) scale([DIM_FONTSCALE, DIM_FONTSCALE]) text(label);
                     } else {
                         color(color) translate([-horz_length, 0, 0])
                                 line(
                                     length=horz_length, width=line_width, height=line_height, left_arrow=false,
                                     right_arrow=false
                                 );
-                        if (len(text) > 0)
+                        if (len(label) > 0)
                             color(text_color) translate([-(horz_length + space), -DIM_FONTSCALE * 3, 0])
-                                    linear_extrude(height=line_height) scale([DIM_FONTSCALE, DIM_FONTSCALE]) text(text, halign="right");
+                                    linear_extrude(height=line_height) scale([DIM_FONTSCALE, DIM_FONTSCALE]) text(label, halign="right");
                     }
 
                     if (do_circle) {
