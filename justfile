@@ -25,10 +25,11 @@ docs-check:
 images *names:
     @OPENSCAD={{ openscad }} python3 -I scripts/docs.py images "$@"
 
-# Run the fixtures in tests/ and check what each one produces, then test scripts/scad-check.sh
+# Run the fixtures in tests/ and check what each one produces, then test scad-check.sh and docs.py
 test:
     @OPENSCAD={{ openscad }} bash tests/run.sh
     @bash tests/scad-check.test.sh
+    @python3 -I -B tests/docs-scan.test.py
 
 # Format the .scad sources with topiary (.topiary/languages.ncl)
 fmt:
