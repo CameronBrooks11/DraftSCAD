@@ -105,7 +105,9 @@ Things to know:
 
 - Pass `text` to add a prefix, a tolerance or units, or to set the precision: `dimensions(10 / 3, text = "3.33")`.
   In a view drawn at a scale, it also lets the label show the true size. `text = ""` draws the line unbroken, with no
-  label. Any value but a string, a finite number or `undef` stops with an assert.
+  label; with no break to make room for, a `DIM_CENTER` dimension keeps its arrows inside down to 16 line widths
+  (0.4 at the default line width), and below that draws the outside form, which has no line between the arrows.
+  Any value but a string, a finite number or `undef` stops with an assert.
 - A dimension is always horizontal. For a vertical one, wrap it in `rotate([ 0, 0, 90 ])`; the label rotates with it.
 - The module does not draw extension lines. Draw those with `line()`.
 - The room a label needs comes from `dd_text_units()`, which is exact for most ASCII labels in the default font. A

@@ -42,7 +42,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   number of decimals still needs a string. Any other type stops with an `assert` naming the parameter (#43).
 - An infinite `text`, such as `1 / 0`, was drawn as "inf"; it now stops with the same assert as any other value that
   is not a string or a finite number. `dimensions(text = "")` broke the line around an empty label; the line is now
-  unbroken (#50).
+  unbroken, and a short `DIM_CENTER` dimension with an empty label keeps its arrows inside down to 16 line widths,
+  where it used to switch to the outside form sooner (#50).
 
 ## [0.1.0] - 2026-11-10
 

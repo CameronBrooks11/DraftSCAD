@@ -10,7 +10,8 @@
 # A fixture with lines
 #   // expect-error: REGEX
 # must instead fail scripts/scad-check.sh, with every REGEX matching what it reported: a test for
-# an assert. Keep one such call to a fixture, as 2021.01 stops at the first.
+# an assert. Keep one such call to a fixture: OpenSCAD stops at the first failed assert, so a second
+# is never reached.
 #
 # A fixture with a line
 #   // min-openscad: VERSION
