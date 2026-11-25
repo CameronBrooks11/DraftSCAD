@@ -4,6 +4,7 @@
 #
 # Each case sets what the fake prints and its exit status for the CSG run and the STL run, and its
 # version and --help text, then checks the exit status of scad-check.sh. It needs no OpenSCAD.
+# The fake prints with printf %b, so an output string must not contain \c, which ends it there.
 set -euo pipefail
 
 dir=$(cd "$(dirname "$0")" && pwd)
@@ -60,9 +61,12 @@ case_ "the empty line with text after it fails" 1 FAKE_STL_OUT="$empty more\n" F
 case_ "the empty line with text after a CR fails" 1 FAKE_STL_OUT="$empty\rmore\n" FAKE_STL_EXIT=1
 case_ "the empty line inside an ECHO fails" 1 FAKE_STL_OUT="ECHO: \"$empty\"\n" FAKE_STL_EXIT=1
 case_ "the empty line after other text fails" 1 FAKE_STL_OUT="crashed: $empty\n" FAKE_STL_EXIT=1
+case_ "the empty line with another character for its full stop fails" 1 \
+    FAKE_STL_OUT="Current top level object is empty!\n" FAKE_STL_EXIT=1
 case_ "the empty line excuses nothing in the CSG run" 1 FAKE_CSG_OUT="$empty\n" FAKE_CSG_EXIT=1
 case_ "a plain crash fails" 1 FAKE_STL_OUT="Segmentation fault\n" FAKE_STL_EXIT=139
 case_ "a WARNING fails, exit 0 or not" 1 FAKE_CSG_OUT="WARNING: x\n"
+case_ "a WARNING with exit 1 fails" 1 FAKE_STL_OUT="WARNING: x\n" FAKE_STL_EXIT=1
 case_ "an ERROR fails" 1 FAKE_CSG_OUT="ERROR: x\n"
 case_ "a DEPRECATED line fails" 1 FAKE_CSG_OUT="DEPRECATED: x\n"
 case_ "a FONT-WARNING fails" 1 FAKE_STL_OUT="FONT-WARNING: x\n"
@@ -71,12 +75,36 @@ case_ "an ECHO mentioning WARNING passes" 0 FAKE_CSG_OUT="ECHO: \"WARNING\"\n"
 case_ "a snapshot without --backend fails" 1 FAKE_HELP='Usage: openscad\n'
 case_ "an unknown version without --backend fails" 1 FAKE_VERSION='' FAKE_HELP='Usage: openscad\n'
 
-# 2021.x evaluates only: a geometry warning would fail, so passing shows the STL run was skipped.
-case_ "2021.01 evaluates only" 0 FAKE_VERSION=2021.01 FAKE_HELP='Usage: openscad\n' FAKE_STL_OUT="WARNING: x\n"
-if grep -q binstl "$tmp/log"; then
+# fail_unless_logged NAME PATTERN: the last case's calls to the fake include one matching PATTERN.
+fail_unless_logged() {
+    if ! grep -q -- "$2" "$tmp/log"; then
+        failed=$((failed + 1))
+        echo "FAIL $1: no call matched $2"
+    fi
+}
+
+# The calls a clean file makes: both runs with --hardwarnings, the STL run on Manifold.
+case_ "a clean file, its calls" 0
+fail_unless_logged "the CSG run uses --hardwarnings" '^--hardwarnings --export-format csg'
+fail_unless_logged "the STL run uses --hardwarnings and Manifold" '^--hardwarnings --backend=manifold --export-format binstl'
+
+# A warning is printed with the TRACE lines after it.
+case_ "a warning with its trace" 1 FAKE_CSG_OUT="WARNING: x\nTRACE: called by y\n"
+if ! grep -q '^TRACE: called by y' "$tmp/out"; then
     failed=$((failed + 1))
-    echo "FAIL 2021.01 evaluates only: the STL run happened"
+    echo "FAIL a warning with its trace: the TRACE line was not printed"
 fi
+
+# 2021.x evaluates only. A CSG warning still fails it; a geometry warning does not, and the STL run
+# never happens.
+for v in 2021.01 2021.06; do
+    case_ "$v evaluates only" 0 FAKE_VERSION=$v FAKE_HELP='Usage: openscad\n' FAKE_STL_OUT="WARNING: x\n"
+    if grep -q binstl "$tmp/log"; then
+        failed=$((failed + 1))
+        echo "FAIL $v evaluates only: the STL run happened"
+    fi
+    case_ "$v still evaluates" 1 FAKE_VERSION=$v FAKE_HELP='Usage: openscad\n' FAKE_CSG_OUT="WARNING: x\n"
+done
 
 if ((failed)); then
     echo "$failed scad-check case(s) failed"
