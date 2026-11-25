@@ -51,7 +51,8 @@ INCLUDES = re.compile(r"(?m)^\s*(?:include|use)\s*<[^>]+>")
 LIBRARY = re.compile(r"(?m)^\s*(?:include|use)\s*<DraftSCAD/")
 IMAGE_REF = re.compile(r"!\[[^\]]*\]\(([^)\s]+)\)|<img\s[^>]*src=\"([^\"]+)\"")
 STRAY = ("the check does not read this OpenSCAD block: write it at the top level of the page, opened "
-         "with an unindented ```scad line and closed with a ``` line")
+         "with an unindented ```scad line and closed with a ``` line; if it is, the Markdown above it is "
+         "read as a list, a quote, a fence or HTML that has not ended")
 
 
 class Block:
@@ -142,11 +143,11 @@ def scan(page):
                 html_end = HTML_RAW_END
         elif HTML_TAG.match(line):
             html_end = ""
-    # Every line inside an evaluated block, its fences included, is accounted for; any other line
-    # that looks like an OpenSCAD opener is reported, whatever the scan above made of it.
-    covered = set()
-    for b in found:
-        covered.update(range(b.line, b.line + b.code.count("\n") + 2))
+    # Only an evaluated block's opener is accounted for. A line inside one that looks like a fence
+    # opener is no OpenSCAD anyway, and the scan above may have taken an HTML block for a scad block,
+    # inside which a renderer opens a real fence; so any other line that looks like an OpenSCAD
+    # opener is reported, whatever the scan made of it.
+    covered = {b.line for b in found}
     stray = []
     for i, line in enumerate(lines):
         if i + 1 in covered:

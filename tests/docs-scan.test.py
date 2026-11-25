@@ -58,6 +58,14 @@ CASES = [
     ("<pre> ended by </style>, then a block", "<pre>\n<style>a{}</style>\n\n" + S, [4], []),
     # a backtick fence's info string has no backtick, so this line is inline code, not a fence
     ("a line opening with inline code, then a block", "```x``` is inline code\n\n" + S, [3], []),
+    # a fence opener inside an evaluated block, or right after one, is still reported
+    ("```openscad right after an evaluated block", S + "\n```openscad\ncube(1);\n```", [1], [5]),
+    ("a fence line inside an evaluated block", "```scad\ncube(1);\n~~~openscad\n```", [1], [3]),
+    # HTML the scan does not model, read as a scad block, must not hide a real fence inside it
+    # (the scan does not model <?x ?> and evaluates the span from line 2, which OpenSCAD then rejects)
+    ("<?x ... ?> holding ```scad, then ```openscad", "<?note\n```scad\n?>\n```openscad\ncube(1);\n```", [2], [4]),
+    ("a tag after a paragraph line, then ~~~text holding ```scad and ```openscad",
+     "Some text\n<span>\n~~~text\n\n```scad\n~~~\n```openscad\ncube(1);\n```", [5], [7]),
     # prose and other code raise nothing
     ("a ```text block", "```text\nhello\n```", [], []),
     ("prose mentioning ```", "Use ``` to fence code.", [], []),
