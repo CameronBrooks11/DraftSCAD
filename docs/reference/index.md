@@ -8,12 +8,12 @@ has_children: true
 
 Every module the library provides, by file.
 
-| Page                                              | Modules                                                     | Source                     |
-| ------------------------------------------------- | ----------------------------------------------------------- | -------------------------- |
-| [Lines and dimensions](lines-and-dimensions.md)   | `line`, `arrow`, `dimensions`, `leader_line`, `circle_center`, `dd_text_units` | `src/dd_dimlines.scad`     |
-| [Sheets](sheets.md)                               | `draw_sheet`, `draw_frame`, `draw_grid`                     | `src/dd_sheet.scad`        |
-| [Title blocks](title-blocks.md)                   | `titleblock`, `titleblock0`, `titleblock1`, `revblock0`     | `src/dd_titleblock.scad`, `templates/` |
-| [Constants](constants.md)                         | The `DIM_*` constants                                       | `dimdraft.scad`            |
+| Page                                            | Modules                                                                        | Source                                 |
+| ----------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------- |
+| [Lines and dimensions](lines-and-dimensions.md) | `line`, `arrow`, `dimensions`, `leader_line`, `circle_center`, `dd_text_units` | `src/dd_dimlines.scad`                 |
+| [Sheets](sheets.md)                             | `draw_sheet`, `draw_frame`, `draw_grid`                                        | `src/dd_sheet.scad`                    |
+| [Title blocks](title-blocks.md)                 | `titleblock`, `titleblock0`, `titleblock1`, `revblock0`                        | `src/dd_titleblock.scad`, `templates/` |
+| [Constants](constants.md)                       | The `DIM_*` constants                                                          | `dimdraft.scad`                        |
 
 `include <DraftSCAD/dimdraft.scad>` provides everything except the three templates, which come from
 `include <DraftSCAD/ddtemplates.scad>`.
