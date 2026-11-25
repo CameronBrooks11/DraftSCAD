@@ -61,7 +61,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   above. On OpenSCAD 2021.01, rendering a drawing with many labels can take minutes (#39).
 - `leader_line(text = ...)` given a number, such as a balloon's `text = 1`, warned and drew no label. It now draws the
   number as `str()` writes it. An explicit `text = undef`, which also warned, draws the line alone, and any value but
-  a string, a finite number or `undef` stops with an `assert` where it used to warn (#43, #50).
+  a string, a finite number or `undef` stops with an `assert` where it used to warn or draw nothing (#43, #50).
 - `just check` and `just test` passed an example or fixture whose `assert` failed, on OpenSCAD 2026.10.15 and
   2021.01, and on 2021.01 they passed some warnings, such as an unknown variable (#31, #34).
 
