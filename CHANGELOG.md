@@ -40,6 +40,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `text = 1`, warned thousands of times and drew nothing in its place; on OpenSCAD 2021.01 the whole drawing was
   lost. A number is now drawn as `str()` writes it: up to 6 significant figures, without trailing zeros, so a set
   number of decimals still needs a string. Any other type stops with an `assert` naming the parameter (#43).
+- An infinite `text`, such as `1 / 0`, was drawn as "inf"; it now stops with the same assert as any other value that
+  is not a string or a finite number. `dimensions(text = "")` broke the line around an empty label; the line is now
+  unbroken (#50).
 
 ## [0.1.0] - 2026-11-10
 

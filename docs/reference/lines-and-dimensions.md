@@ -67,11 +67,11 @@ dimensions(length, line_width = DIM_LINE_WIDTH, line_height = DIM_LINE_HEIGHT, l
 
 Draws a dimension line from the origin along +X, `length` long, labelled with `length` or with `text`.
 
-| Parameter | Meaning                                                                                 |
-| --------- | --------------------------------------------------------------------------------------- |
-| `length`  | The distance to dimension                                                               |
-| `loc`     | Where the label goes; see below                                                         |
-| `text`    | The label, a string or a number; leave it out to label the dimension with `str(length)` |
+| Parameter | Meaning                                                                                        |
+| --------- | ---------------------------------------------------------------------------------------------- |
+| `length`  | The distance to dimension                                                                      |
+| `loc`     | Where the label goes; see below                                                                |
+| `text`    | The label, a string or a finite number; leave it out to label the dimension with `str(length)` |
 
 | `loc`         | Result                                                                        |
 | ------------- | ----------------------------------------------------------------------------- |
@@ -104,7 +104,8 @@ for (i = [0:3])
 Things to know:
 
 - Pass `text` to add a prefix, a tolerance or units, or to set the precision: `dimensions(10 / 3, text = "3.33")`.
-  In a view drawn at a scale, it also lets the label show the true size.
+  In a view drawn at a scale, it also lets the label show the true size. `text = ""` draws the line unbroken, with no
+  label. Any value but a string, a finite number or `undef` stops with an assert.
 - A dimension is always horizontal. For a vertical one, wrap it in `rotate([ 0, 0, 90 ])`; the label rotates with it.
 - The module does not draw extension lines. Draw those with `line()`.
 - The room a label needs comes from `dd_text_units()`, which is exact for most ASCII labels in the default font. A
@@ -144,8 +145,10 @@ Draws an arrow pointing at the origin from a given angle, a horizontal shoulder,
 | `angle_length` | Length of the angled segment                                                 |
 | `horz_length`  | Length of the horizontal shoulder                                            |
 | `direction`    | `DIM_RIGHT` or `DIM_LEFT`: which way the shoulder and label extend           |
-| `text`         | The label, a string or a number; leave it out to draw the line alone         |
+| `text`         | The label, a string or a finite number; leave it out to draw the line alone  |
 | `do_circle`    | Draw a circle around the label, for a balloon number                         |
+
+With `do_circle = true` and no label, the circle is drawn empty, for a balloon number filled in by hand.
 
 Translate to the centre of the feature first. To point at the rim of a hole, pass the hole's radius as `radius`. To
 point at a spot, pass `radius = 0`.
