@@ -52,11 +52,11 @@ arrow(arr_points, arr_length, height, color = DEF_LINE_COLOR)
 
 Draws one arrowhead with its tip at the origin, pointing toward −X. `line()` uses it; you rarely need it directly.
 
-| Parameter    | Meaning                                                   |
-| ------------ | --------------------------------------------------------- |
+| Parameter    | Meaning                                                    |
+| ------------ | ---------------------------------------------------------- |
 | `arr_points` | Width across the barbs, and the distance from tip to barbs |
 | `arr_length` | Distance from the tip to the notch at the back of the head |
-| `height`     | Z thickness                                               |
+| `height`     | Z thickness                                                |
 
 ## dimensions
 
@@ -124,11 +124,11 @@ dd_text_units(text)
 A function. It estimates the width of a string in font units, at OpenSCAD's default text size of 10. Multiply by
 `DIM_FONTSCALE` for the width as drawn.
 
-Each printable ASCII character counts its advance in the default font, measured with `textmetrics()`: 7.724 for a
-digit, 3.859 for a period or a space, 10.03 for `R`. So the result is exact for most ASCII labels:
-`dd_text_units("3.53")` is 27.031, against 27.032 measured. It comes out slightly wide where the font kerns a pair,
-as in `11` (15.448 against 14.418) or `AV`. Any other character counts 7.724, the width of a digit, and other fonts
-are not measured.
+Each printable ASCII character counts its advance in the default font, measured with `textmetrics()`: 7.724 for a digit,
+3.859 for a period or a space, 10.03 for `R`. So the result is exact, to the table's three decimals, for most ASCII
+labels: `dd_text_units("3.53")` is 27.031, against 27.0317 measured. It comes out slightly wide where the font kerns a
+pair, as in `11` (15.448 against 14.418) or `AV`. Any other character counts 7.724, the width of a digit, and other
+fonts are not measured.
 
 The library estimates the width and does not call `textmetrics()`, so it needs nothing newer than OpenSCAD 2021.01.
 
@@ -171,8 +171,9 @@ leader_line(angle = -45, radius = radius, angle_length = 1, horz_length = 0.25, 
 
 ![Three leader lines around a hole centre: one to the right, one to the left, and one ending in a circled number](../assets/images/leader_line.png)
 
-The circle is centred on the label and its edge meets the end of the shoulder line. Its size comes from
-`dd_text_units()`, so it fits letters as well as digits.
+The circle is centred on the label across its width, with the label sitting a little above the centre, and its edge
+meets the end of the shoulder line. Its size comes from `dd_text_units()`, so it fits a digit, a capital letter or any
+label of two or more characters; a single narrow, tall character such as `l`, `i` or `I` touches the circle.
 
 ## circle_center
 

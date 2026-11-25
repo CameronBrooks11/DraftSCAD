@@ -6,7 +6,7 @@ has_children: true
 
 # Reference
 
-Every module the library provides, by file.
+Every module and function the library provides, by file.
 
 | Page                                            | Modules                                                                        | Source                                 |
 | ----------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------- |
@@ -20,7 +20,9 @@ Every module the library provides, by file.
 
 Conventions that hold throughout:
 
-- Everything is drawn on the XY plane at Z = 0, extruded upward by `DIM_LINE_HEIGHT`. Translate it to where you want it.
+- Everything is drawn flat on the XY plane, about `DIM_LINE_HEIGHT` thick, from Z = 0 up; a few parts dip a little
+  below, such as an outside arrow, a leader's circle and the sheet grid. Translate it to where you want it.
 - Lengths are in the units of your model. The library has no unit of its own.
-- `line_width` and `line_height` parameters default to `DIM_LINE_WIDTH` and `DIM_LINE_HEIGHT`.
-- `color` and `text_color` parameters default to `DEF_LINE_COLOR` and `DEF_TEXT_COLOR`.
+- `line_width` and `line_height` parameters default to `DIM_LINE_WIDTH` and `DIM_LINE_HEIGHT`, and `color` and
+  `text_color` to `DEF_LINE_COLOR` and `DEF_TEXT_COLOR`, except where a page gives another default, as for the sheet
+  frame and grid and `circle_center()`.
