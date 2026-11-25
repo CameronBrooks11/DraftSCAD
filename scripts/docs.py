@@ -36,26 +36,37 @@ WARNING = re.compile(r"([A-Z]+-)?(WARNING|ERROR)|DEPRECATED")
 OPENSCAD = os.environ.get("OPENSCAD", "openscad")
 DEFAULT_FLAGS = "--camera=0,0,0,0,0,0,0 --viewall --autocenter --projection=o --imgsize=900,500"
 
-FENCE = re.compile(r"(?ms)^```scad[ \t]*\n(.*?)^```[ \t]*$")
-FENCE_LINE = re.compile(r"^([ \t]*)(`{3,}|~{3,})(.*)$")
+OPENING = re.compile(r"^( {0,3})(`{3,}|~{3,})(.*)$")
+CLOSING = re.compile(r"^ {0,3}(`{3,}|~{3,})[ \t]*$")
+CONTAINERS = re.compile(r"^(?:[ \t]*(?:>|[-*+]|\d{1,9}[.)])?[ \t]?)*")
+# CommonMark HTML blocks: a comment; <pre>, <script>, <style> or <textarea>, which run to any of their
+# closing tags; and, approximately, any other block-level tag alone at the start of a line, which runs
+# to the next blank line.
+HTML_COMMENT = re.compile(r"^ {0,3}<!--")
+HTML_RAW = re.compile(r"^ {0,3}<(pre|script|style|textarea)(\s|>|$)", re.I)
+HTML_RAW_END = ("</pre>", "</script>", "</style>", "</textarea>")
+HTML_TAG = re.compile(r"^ {0,3}</?[A-Za-z][A-Za-z0-9-]*(\s|/?>|$)")
 FILE = re.compile(r"\A// file: (\S+)")
 INCLUDES = re.compile(r"(?m)^\s*(?:include|use)\s*<[^>]+>")
 LIBRARY = re.compile(r"(?m)^\s*(?:include|use)\s*<DraftSCAD/")
 IMAGE_REF = re.compile(r"!\[[^\]]*\]\(([^)\s]+)\)|<img\s[^>]*src=\"([^\"]+)\"")
+STRAY = ("the check does not read this OpenSCAD block: write it at the top level of the page, opened "
+         "with an unindented ```scad line and closed with a ``` line; if it is, the Markdown above it is "
+         "read as a list, a quote, a fence or HTML that has not ended")
 
 
 class Block:
-    def __init__(self, page, match, text):
+    def __init__(self, page, code, start, end, line):
         self.page = page
-        self.code = match.group(1)
-        self.start = match.start()
-        self.end = match.end()
-        self.line = text.count("\n", 0, match.start()) + 1
+        self.code = code
+        self.start = start
+        self.end = end
+        self.line = line
         m = FILE.match(self.code)
         self.file = m.group(1) if m else None
 
     def where(self):
-        return f"{self.page.relative_to(REPO)}:{self.line}"
+        return f"{where(self.page)}:{self.line}"
 
     def evaluated(self):
         """A block that includes or uses a file, or that another block can include. A block with
@@ -63,43 +74,97 @@ class Block:
         return bool(self.file or INCLUDES.search(self.code))
 
 
+def where(page):
+    """A page's path as reports name it: from the repo when it is inside it."""
+    return page.relative_to(REPO) if page.is_relative_to(REPO) else page
+
+
 def pages():
     return [REPO / "README.md"] + sorted((REPO / "docs").rglob("*.md"))
 
 
-def blocks(page):
+def language(info):
+    """The language a fence's info string names: its first word, as in ```scad, ```{.scad} or
+    ```OpenSCAD title="x"."""
+    words = info.split()
+    return words[0].strip("{}").lstrip(".").lower() if words else ""
+
+
+def scan(page):
+    """The page's evaluated scad blocks, and the lines that look like OpenSCAD fences but that the
+    check does not evaluate.
+
+    One pass over the lines, with CommonMark's fence rules: a fence opens on 3 or more backticks or
+    tildes indented 0 to 3 spaces (a backtick fence's info string has no backtick), and closes on a
+    bare fence of the same character, no shorter, indented 0 to 3 spaces. Lines inside a fence, an
+    HTML comment or a <pre>, <script>, <style> or <textarea> block are content, not Markdown.
+
+    A block is evaluated only when it is a top-level fence opened by a line that is exactly
+    ```scad, with spaces at most after it, and closed.
+
+    Reporting does not trust that reading. Every line that looks like an OpenSCAD fence opener, once
+    indentation, '>' and list markers are stripped from it, is reported unless it lies within an
+    evaluated block: a fence in a blockquote, a list item or an HTML block, one indented 4 spaces or
+    more, another spelling, one never closed, and one nested in another fence or a comment. A line
+    scan cannot follow every CommonMark container, so where it reads a page wrongly the result is a
+    report, never a block skipped without a word."""
     text = page.read_text()
-    return text, [Block(page, m, text) for m in FENCE.finditer(text)]
+    lines = text.split("\n")
+    offsets = [0]
+    for line in lines:
+        offsets.append(offsets[-1] + len(line) + 1)
+    found = []
+    fence = html_end = None  # html_end: the closing strings that end the HTML block, or "" for a blank line
+    for i, line in enumerate(lines):
+        n = i + 1
+        if html_end is not None:
+            if (html_end == "" and not line.strip()) or (html_end and any(e in line.lower() for e in html_end)):
+                html_end = None
+            continue
+        if fence:
+            m = CLOSING.match(line)
+            if m and m.group(1)[0] == fence["char"] and len(m.group(1)) >= fence["len"]:
+                if fence["evaluated"]:
+                    code = "".join(f + "\n" for f in lines[fence["line"]:i])
+                    found.append(Block(page, code, offsets[fence["line"] - 1], offsets[i] + len(line), fence["line"]))
+                fence = None
+            continue
+        m = OPENING.match(line)
+        if m and not (m.group(2)[0] == "`" and "`" in m.group(3)):
+            evaluated = m.group(1) == "" and m.group(2) == "```" and m.group(3).rstrip(" \t") == "scad"
+            fence = {"char": m.group(2)[0], "len": len(m.group(2)), "line": n, "evaluated": evaluated}
+            continue
+        if HTML_COMMENT.match(line):
+            # <!--> and <!---> are whole comments too, so the end is looked for from the second "-".
+            if "-->" not in line[line.index("<!--") + 2:]:
+                html_end = ("-->",)
+        elif HTML_RAW.match(line):
+            if not any(e in line.lower() for e in HTML_RAW_END):
+                html_end = HTML_RAW_END
+        elif HTML_TAG.match(line):
+            html_end = ""
+    # Only an evaluated block's opener is accounted for. A line inside one that looks like a fence
+    # opener is no OpenSCAD anyway, and the scan above may have taken an HTML block for a scad block,
+    # inside which a renderer opens a real fence; so any other line that looks like an OpenSCAD
+    # opener is reported, whatever the scan made of it.
+    covered = {b.line for b in found}
+    stray = []
+    for i, line in enumerate(lines):
+        if i + 1 in covered:
+            continue
+        m = OPENING.match(line[CONTAINERS.match(line).end():])
+        if m and language(m.group(3)) in ("scad", "openscad"):
+            stray.append(i + 1)
+    return text, found, [f"{where(page)}:{n}: {STRAY}" for n in stray]
+
+
+def blocks(page):
+    text, found, _ = scan(page)
+    return text, found
 
 
 def stray_fences(page):
-    """Fences that look like OpenSCAD but that the check does not evaluate, which it would otherwise
-    skip without a word. The evaluated blocks are the ones FENCE finds, so an OpenSCAD opener counts
-    only where a FENCE match starts on its line: that catches an opener FENCE reads differently, and
-    one whose block FENCE never closes. Lines split on \n only, as FENCE counts them."""
-    text, page_blocks = blocks(page)
-    evaluated = {b.line for b in page_blocks}
-    stray, opener = [], None
-    for n, line in enumerate(text.split("\n"), 1):
-        m = FENCE_LINE.match(line)
-        if not m:
-            continue
-        fence, info = m.group(2), m.group(3).strip()
-        if opener:
-            # Only a bare fence of the same character, and no shorter, closes the block.
-            if fence[0] == opener[0] and len(fence) >= len(opener) and not info:
-                opener = None
-            continue
-        # A backtick fence's info string has no backtick: ```x``` starts a line of inline code.
-        if fence[0] == "`" and "`" in info:
-            continue
-        opener = fence
-        words = info.split()
-        lang = words[0].strip("{}").lstrip(".").lower() if words else ""
-        if lang in ("scad", "openscad") and n not in evaluated:
-            stray.append(f"{page.relative_to(REPO)}:{n}: the check does not read this OpenSCAD block: "
-                         "open it with an unindented ```scad line and close it with a ``` line")
-    return stray
+    return scan(page)[2]
 
 
 def write_page(page_blocks, d):
