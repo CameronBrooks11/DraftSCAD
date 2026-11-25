@@ -18,7 +18,7 @@ include <../dimdraft.scad>;
     * - Fills the block with white if fill is true.
     */
 module revblock0(revisions, fill = true) {
-    assert(is_bool(fill), str("revblock0(): fill must be true or false, not ", fill));
+    assert(is_bool(fill), "revblock0(): fill must be true or false");
     DIM_FONTSCALE = DIM_LINE_WIDTH * .7;
 
     // revision block headings

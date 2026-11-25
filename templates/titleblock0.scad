@@ -22,7 +22,7 @@ include <../dimdraft.scad>;
  * - Fills the block with white if fill is true.
  */
 module titleblock0(part_details, doc_details, org_details, fill = true) {
-    assert(is_bool(fill), str("titleblock0(): fill must be true or false, not ", fill));
+    assert(is_bool(fill), "titleblock0(): fill must be true or false");
 
     row_height = 20;
 

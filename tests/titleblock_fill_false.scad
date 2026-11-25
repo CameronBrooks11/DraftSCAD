@@ -1,5 +1,9 @@
 // With fill = false no template draws its white slab.
 // reject: color\(\[1, 1, 1, 1\]\)
+// Each block is still drawn: titleblock0's, revblock0's and titleblock1's own text.
+// expect: text = "Material"
+// expect: text = "Revisions"
+// expect: text = "SCADY"
 include <../ddtemplates.scad>
 include <../dimdraft.scad>
 

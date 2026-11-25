@@ -6,11 +6,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- `titleblock0()`, `revblock0()` and `titleblock1()` take `fill` as `true` or `false` only. Any other value, such as
+  the string `"true"` the reference used to show for `titleblock0()`, or `0` and `1`, which worked before, now stops
+  with an `assert`.
+
 ### Fixed
 
 - `titleblock0()` took `fill` as the string `"true"` by default, so `fill = "false"`, as its documented signature
-  suggested, still drew the white slab. `fill` defaults to `true` in every template, and a value that is not `true` or
-  `false` stops with an `assert`.
+  suggested, still drew the white slab, as it did in `revblock0()` and `titleblock1()`. `fill` defaults to `true` in
+  every template.
 
 ## [0.2.0] - 2026-11-25
 
