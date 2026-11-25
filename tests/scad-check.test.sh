@@ -84,31 +84,46 @@ fail_unless_called() {
     fi
 }
 
-# fail_unless_printed NAME TEXT: the last case's output from scad-check.sh contains TEXT.
+# fail_unless_printed NAME TEXT: the last case's output from scad-check.sh has a line ending in TEXT.
 fail_unless_printed() {
-    if ! grep -Fq -- "$2" "$tmp/out"; then
+    if ! grep -q -- "$(printf '%s' "$2" | sed 's/[][\.*^$/]/\\&/g')\$" "$tmp/out"; then
         failed=$((failed + 1))
-        echo "FAIL $1: the output does not contain: $2"
+        echo "FAIL $1: no output line ends in: $2"
     fi
 }
 
-# The calls a clean file makes, whole: both runs with --hardwarnings into /dev/null on the file, the
-# STL run on Manifold.
+# The calls a clean file makes, whole and nothing else: both runs with --hardwarnings into /dev/null
+# on the file, the STL run on Manifold, and the --version and --help probes between them.
 case_ "a clean file, its calls" 0
 fail_unless_called "the CSG run" "--hardwarnings --export-format csg -o /dev/null $tmp/x.scad"
 fail_unless_called "the STL run" "--hardwarnings --backend=manifold --export-format binstl -o /dev/null $tmp/x.scad"
+printf '%s\n' "--hardwarnings --export-format csg -o /dev/null $tmp/x.scad" --version --help \
+    "--hardwarnings --backend=manifold --export-format binstl -o /dev/null $tmp/x.scad" >"$tmp/want"
+if ! diff -u "$tmp/want" "$tmp/log" >"$tmp/diff"; then
+    failed=$((failed + 1))
+    echo "FAIL a clean file makes these calls and no others:"
+    sed 's/^/     /' "$tmp/diff"
+fi
 
 # What a failure prints: the exit status, OpenSCAD's own lines, and why the geometry was not built.
-case_ "a crash, its message" 1 FAKE_STL_OUT="Segmentation fault\n" FAKE_STL_EXIT=139
+case_ "a crash, its message" 1 FAKE_STL_OUT="line 1\nline 2\nline 3\nline 4\nline 5\nline 6\nline 7\nline 8\nline 9\n" \
+    FAKE_STL_EXIT=139
 fail_unless_printed "a crash prints its exit status" "exited 139"
-fail_unless_printed "a crash prints OpenSCAD's output" "Segmentation fault"
+fail_unless_printed "a crash prints the first 8 lines of OpenSCAD's output" "line 8"
+if grep -q '^line 9$' "$tmp/out"; then
+    failed=$((failed + 1))
+    echo "FAIL a crash prints no more than 8 lines of OpenSCAD's output"
+fi
 case_ "exit 2, its message" 1 FAKE_STL_OUT="$empty\n" FAKE_STL_EXIT=2
 fail_unless_printed "exit 2 prints its exit status" "exited 2"
 case_ "no --backend, its message" 1 FAKE_HELP='Usage: openscad\n'
-fail_unless_printed "no --backend says so" "has no --backend, so the geometry cannot be built"
+fail_unless_printed "no --backend says so" "OpenSCAD 2026.10.15 has no --backend, so the geometry cannot be built"
+case_ "an unknown version without --backend, its message" 1 FAKE_VERSION='' FAKE_HELP='Usage: openscad\n'
+fail_unless_printed "an unknown version says so" "OpenSCAD of unknown version has no --backend, so the geometry cannot be built"
 
 # A warning is printed with the TRACE lines after it.
 case_ "a warning with its trace" 1 FAKE_CSG_OUT="WARNING: x\nTRACE: called by y\n"
+fail_unless_printed "a warning prints itself" "WARNING: x"
 if ! grep -q '^TRACE: called by y' "$tmp/out"; then
     failed=$((failed + 1))
     echo "FAIL a warning with its trace: the TRACE line was not printed"
