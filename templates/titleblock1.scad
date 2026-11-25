@@ -11,6 +11,7 @@ include <../dimdraft.scad>;
  * offset by 1, which is the half-width of the outside line.
  */
 module titleblock1(fill = true) {
+    assert(is_bool(fill), str("titleblock1(): fill must be true or false, not ", fill));
     title_width = 330;
     row_height = 25;
 

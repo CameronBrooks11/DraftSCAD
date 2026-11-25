@@ -6,6 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `titleblock0()` took `fill` as the string `"true"` by default, so `fill = "false"`, as its documented signature
+  suggested, still drew the white slab. `fill` defaults to `true` in every template, and a value that is not `true` or
+  `false` stops with an `assert`.
+
 ## [0.2.0] - 2026-11-25
 
 ### Added

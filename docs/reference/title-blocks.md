@@ -16,13 +16,13 @@ is not tied to the sheet.
 ## Templates
 
 `include <DraftSCAD/ddtemplates.scad>` provides these. Each has its origin at its **top-left corner** and extends
-right and down. Each takes `fill`; when it is true, a white slab is drawn behind the block so a sheet grid does not
-show through.
+right and down. Each takes `fill`, `true` or `false`; when it is true, the default, a white slab is drawn behind the
+block so a sheet grid does not show through.
 
 ### titleblock0
 
 ```scad
-titleblock0(part_details, doc_details, org_details, fill = "true")
+titleblock0(part_details, doc_details, org_details, fill = true)
 ```
 
 A block 290 wide and 140 tall, in line widths.
