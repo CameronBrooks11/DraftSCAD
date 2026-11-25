@@ -36,6 +36,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The labels of `dimensions()`, `leader_line()` and `titleblock()` were 2D beside 3D lines, so a render (F6) or an
   STL export dropped them with a warning. They are now extruded to the height of the lines, and look the same from
   above. On OpenSCAD 2021.01, rendering a drawing with many labels can take minutes (#39).
+- `dimensions(text = ...)` and `leader_line(text = ...)` given a number, such as `text = 3.33` or a balloon's
+  `text = 1`, warned thousands of times and drew nothing. A number is now drawn as its digits, as `str()` writes it
+  (#43).
 
 ## [0.1.0] - 2026-11-10
 

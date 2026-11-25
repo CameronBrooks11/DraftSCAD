@@ -67,11 +67,11 @@ dimensions(length, line_width = DIM_LINE_WIDTH, line_height = DIM_LINE_HEIGHT, l
 
 Draws a dimension line from the origin along +X, `length` long, labelled with `length` or with `text`.
 
-| Parameter | Meaning                                                              |
-| --------- | -------------------------------------------------------------------- |
-| `length`  | The distance to dimension                                            |
-| `loc`     | Where the label goes; see below                                      |
-| `text`    | The label; leave it out to label the dimension with `str(length)`    |
+| Parameter | Meaning                                                                                 |
+| --------- | --------------------------------------------------------------------------------------- |
+| `length`  | The distance to dimension                                                               |
+| `loc`     | Where the label goes; see below                                                         |
+| `text`    | The label, a string or a number; leave it out to label the dimension with `str(length)` |
 
 | `loc`         | Result                                                                        |
 | ------------- | ----------------------------------------------------------------------------- |
@@ -144,7 +144,7 @@ Draws an arrow pointing at the origin from a given angle, a horizontal shoulder,
 | `angle_length` | Length of the angled segment                                                 |
 | `horz_length`  | Length of the horizontal shoulder                                            |
 | `direction`    | `DIM_RIGHT` or `DIM_LEFT`: which way the shoulder and label extend           |
-| `text`         | The label; leave it out to draw the line alone                               |
+| `text`         | The label, a string or a number; leave it out to draw the line alone         |
 | `do_circle`    | Draw a circle around the label, for a balloon number                         |
 
 Translate to the centre of the feature first. To point at the rim of a hole, pass the hole's radius as `radius`. To
