@@ -10,9 +10,10 @@ not there, open an issue first. Work on a branch, and open a pull request agains
   <https://files.openscad.org/snapshots/>, as the "Install OpenSCAD" step in `.github/workflows/test.yml` does. The
   2021.01 build that Debian and Ubuntu ship is not enough on its own: on it the checks evaluate files without building
   their geometry, and skip the fixtures that need a newer OpenSCAD, so a change can pass locally and fail in CI. CI
-  also runs the checks on 2021.01, in a separate job.
-- [topiary](https://github.com/tweag/topiary/releases/tag/v0.8.0) 0.8.0, which formats the `.scad` sources; CI runs
-  `topiary prefetch openscad` once after installing it.
+  also evaluates the examples, the docs and the fixtures on 2021.01, in a separate job; a change that turns it red
+  breaks the library's 2021.01 support.
+- [topiary](https://github.com/tweag/topiary/releases/tag/v0.8.0) 0.8.0, which formats the `.scad` sources. Its first
+  run fetches the OpenSCAD grammar.
 - [just](https://github.com/casey/just), which runs the recipes below.
 - Python 3, for the docs check.
 
@@ -27,7 +28,7 @@ Run `just check` and `just test`. CI runs the same two. The formatting recipes w
 | ----------------- | -------------------------------------------------------------------------------------------- |
 | `just check`      | `fmt-check`, then `examples`, then `docs-check`                                              |
 | `just fmt`        | Formats the `.scad` sources; `just fmt-check` only checks them                               |
-| `just examples`   | Checks every file under `examples/`                                                          |
+| `just examples`   | Checks every `examples/*/*.scad` file                                                        |
 | `just docs-check` | Checks the `scad` blocks in the README and `docs/`, and `scripts/images.tsv` (see below)     |
 | `just test`       | Runs the fixtures in `tests/`, then the tests of `scad-check.sh` and of the docs check       |
 | `just images`     | Redraws the pictures in `docs/assets/images` from `scripts/images.tsv`                       |
@@ -42,8 +43,9 @@ unseen.
 ## Fixtures
 
 A fixture is a `.scad` file in `tests/`. It fails when `scad-check.sh` reports a problem, or when one of these lines
-in it does not hold. Write them exactly as shown, at the start of a line; a misspelt one is ignored. The output
-searched is the CSG export plus the console messages.
+in it does not hold. Write them exactly as shown, at the start of a line: a misspelt `expect` or `reject` line is
+ignored, and the fixture passes without testing it, while a malformed `min-openscad` value fails. The output searched
+is the CSG export plus the console messages.
 
 | Line                       | Means                                                                                  |
 | -------------------------- | -------------------------------------------------------------------------------------- |
