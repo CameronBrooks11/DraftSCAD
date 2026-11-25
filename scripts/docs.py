@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Check the docs' code and draw the docs' pictures.
 
-  check   evaluate every scad block in README.md and docs/ that includes or uses a file, or is a
-          `// file:` block, and fail on a warning or an error; then check scripts/images.tsv
-          against the pictures and the pages
+  check   run scripts/scad-check.sh on every scad block in README.md and docs/ that includes or
+          uses a file, or is a `// file:` block, and fail on a warning or an error; then check
+          scripts/images.tsv against the pictures and the pages
   images  draw the pictures scripts/images.tsv lists into docs/assets/images; the names or globs
           given after `images` draw only the matching rows
 
@@ -31,6 +31,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 IMAGES = REPO / "docs/assets/images"
 TABLE = REPO / "scripts/images.tsv"
+SCAD_CHECK = REPO / "scripts/scad-check.sh"
+WARNING = re.compile(r"([A-Z]+-)?(WARNING|ERROR)|DEPRECATED")
 OPENSCAD = os.environ.get("OPENSCAD", "openscad")
 DEFAULT_FLAGS = "--camera=0,0,0,0,0,0,0 --viewall --autocenter --projection=o --imgsize=900,500"
 
@@ -98,7 +100,7 @@ def write_page(page_blocks, d):
 
 
 def openscad(args, cwd, env):
-    """Run OpenSCAD; return its WARNING and ERROR lines, or the output that says why it failed.
+    """Run OpenSCAD; return its warning lines (see WARNING), or the output that says why it failed.
     Both are needed: 2021.01 exits 0 on some warnings, and every version on a failed assert."""
     try:
         p = subprocess.run([OPENSCAD, "--hardwarnings", *args], cwd=cwd, env=env,
@@ -106,10 +108,17 @@ def openscad(args, cwd, env):
     except FileNotFoundError:
         return [f"cannot run {OPENSCAD}"]
     out = (p.stdout + p.stderr).splitlines()
-    problems = [line for line in out if re.match(r"(WARNING|ERROR)", line)]
+    problems = [line for line in out if WARNING.match(line)]
     if p.returncode and not problems:
         problems = [f"{OPENSCAD} exited {p.returncode}"] + [line for line in out if line.strip()][:8]
     return problems
+
+
+def scad_check(name, cwd, env):
+    """scripts/scad-check.sh on one file: the problems it printed, or [] when it passed."""
+    p = subprocess.run(["bash", str(SCAD_CHECK), name], cwd=cwd, env={**env, "OPENSCAD": OPENSCAD},
+                       capture_output=True, text=True)
+    return [] if p.returncode == 0 else (p.stdout + p.stderr).strip().splitlines()
 
 
 def draws_something(target, cwd, env, tmp):
@@ -244,7 +253,7 @@ def check():
                     continue
                 name = b.file or f"block{b.line}.scad"
                 (d / name).write_text(b.code)
-                found = openscad(["--export-format", "csg", "-o", os.devnull, name], d, env)
+                found = scad_check(name, d, env)
                 evaluated += 1
                 if found:
                     failed += 1

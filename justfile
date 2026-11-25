@@ -9,12 +9,11 @@ default:
 # Check formatting, then evaluate every example and the docs' code, failing on a warning
 check: fmt-check examples docs-check
 
-# Evaluate every example and fail on the first warning
+# Check every example with scripts/scad-check.sh and fail on the first warning
 examples:
     @for f in examples/*/*.scad; do \
         echo "$f"; \
-        status=0; out=$({{ openscad }} --hardwarnings --export-format csg -o /dev/null "$f" 2>&1) || status=$?; \
-        if ((status)) || grep -Eq '^(WARNING|ERROR)' <<<"$out"; then echo "$out"; exit 1; fi; \
+        OPENSCAD={{ openscad }} bash scripts/scad-check.sh "$f"; \
     done
 
 # Evaluate the scad blocks in README.md and docs/, and check scripts/images.tsv

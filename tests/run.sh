@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Evaluates every fixture in this directory with OpenSCAD and checks what it produces.
 #
-# A fixture fails when OpenSCAD reports a warning or error, when a line
+# A fixture fails when scripts/scad-check.sh reports a warning or error, when a line
 #   // expect: REGEX
 # in the fixture matches nothing in the output, or when a line
 #   // reject: REGEX
@@ -41,12 +41,12 @@ for fixture in "$dir"/*.scad; do
         continue
     fi
 
-    # A failed assert still exits 0, so the output is read as well as the exit status.
-    status=0
-    out=$("$openscad" --hardwarnings --export-format csg -o - "$fixture" 2>&1) || status=$?
-    if ((status)) || grep -Eq '^(WARNING|ERROR)' <<<"$out"; then
+    if ! found=$(OPENSCAD=$openscad bash "$dir/../scripts/scad-check.sh" "$fixture"); then
         problems+=("OpenSCAD reported a warning or error")
+        while IFS= read -r line; do problems+=("  $line"); done <<<"$found"
     fi
+    # the CSG export and the console messages, for the expect and reject lines
+    out=$("$openscad" --export-format csg -o - "$fixture" 2>&1) || true
 
     while IFS= read -r pattern; do
         grep -Eq -- "$pattern" <<<"$out" || problems+=("expected but not found: $pattern")
@@ -60,7 +60,6 @@ for fixture in "$dir"/*.scad; do
         failed=$((failed + 1))
         echo "FAIL $name"
         printf '     %s\n' "${problems[@]}"
-        grep -E 'WARNING|ERROR' <<<"$out" | sed 's/^/     /' || true
     else
         echo "ok   $name"
     fi
