@@ -52,11 +52,11 @@ arrow(arr_points, arr_length, height, color = DEF_LINE_COLOR)
 
 Draws one arrowhead with its tip at the origin, pointing toward −X. `line()` uses it; you rarely need it directly.
 
-| Parameter    | Meaning                                                   |
-| ------------ | --------------------------------------------------------- |
+| Parameter    | Meaning                                                    |
+| ------------ | ---------------------------------------------------------- |
 | `arr_points` | Width across the barbs, and the distance from tip to barbs |
 | `arr_length` | Distance from the tip to the notch at the back of the head |
-| `height`     | Z thickness                                               |
+| `height`     | Z thickness                                                |
 
 ## dimensions
 
@@ -73,17 +73,18 @@ Draws a dimension line from the origin along +X, `length` long, labelled with `l
 | `loc`     | Where the label goes; see below                                                                |
 | `text`    | The label, a string or a finite number; leave it out to label the dimension with `str(length)` |
 
-| `loc`         | Result                                                                        |
-| ------------- | ----------------------------------------------------------------------------- |
-| `DIM_CENTER`  | Arrows point outward to both ends, with the label in a gap in the middle      |
-| `DIM_LEFT`    | One unbroken line with an arrow at each end, label to the left                |
-| `DIM_RIGHT`   | One unbroken line with an arrow at each end, label to the right               |
-| `DIM_OUTSIDE` | Two arrows outside the distance pointing inward, label between them           |
+| `loc`         | Result                                                                         |
+| ------------- | ------------------------------------------------------------------------------ |
+| `DIM_CENTER`  | Arrows point outward to both ends, with the label in a gap in the middle       |
+| `DIM_LEFT`    | One unbroken line with an arrow at each end, label to the left                 |
+| `DIM_RIGHT`   | One unbroken line with an arrow at each end, label to the right                |
+| `DIM_OUTSIDE` | Two arrows outside the distance pointing inward, label between them if it fits |
 
 Use `DIM_LEFT`, `DIM_RIGHT` or `DIM_OUTSIDE` when the distance is too short to hold the label.
 
 If you do not, the module handles it. A `DIM_CENTER` dimension with no room for its label and two arrows is drawn in
-the `DIM_OUTSIDE` form. If the label does not fit between the arrows either, it goes to the right of them.
+the `DIM_OUTSIDE` form. In that form, chosen or not, a label that does not fit between the arrows goes to the right of
+them.
 
 ```scad
 include <DraftSCAD/dimdraft.scad>
@@ -123,10 +124,11 @@ dd_text_units(text)
 A function. It estimates the width of a string in font units, at OpenSCAD's default text size of 10. Multiply by
 `DIM_FONTSCALE` for the width as drawn.
 
-Each printable ASCII character counts its advance in the default font, measured with `textmetrics()`: 7.724 for a
-digit, 3.859 for a period or a space, 10.03 for `R`. So the result is exact for a number, `dd_text_units("3.53")`
-is 27.031, and for most other ASCII labels. It comes out slightly wide where the font kerns a pair, as in `AV`. Any
-other character counts 7.724, the width of a digit, and other fonts are not measured.
+Each printable ASCII character counts its advance in the default font, measured with `textmetrics()`: 7.724 for a digit,
+3.859 for a period or a space, 10.03 for `R`. So the result is exact, to the table's three decimals, for most ASCII
+labels: `dd_text_units("3.53")` is 27.031, against 27.0317 measured. It comes out slightly wide where the font kerns a
+pair, as in `11` (15.448 against 14.418) or `AV`. Any other character counts 7.724, the width of a digit, and other
+fonts are not measured.
 
 The library estimates the width and does not call `textmetrics()`, so it needs nothing newer than OpenSCAD 2021.01.
 
@@ -169,8 +171,9 @@ leader_line(angle = -45, radius = radius, angle_length = 1, horz_length = 0.25, 
 
 ![Three leader lines around a hole centre: one to the right, one to the left, and one ending in a circled number](../assets/images/leader_line.png)
 
-The circle is centred on the label and its edge meets the end of the shoulder line. Its size comes from
-`dd_text_units()`, so it fits a number; a label of letters may sit off-centre in it.
+The circle is centred on the label across its width, with the label sitting a little above the centre, and its edge
+meets the end of the shoulder line. Its size comes from `dd_text_units()`, so it fits a digit, any capital but `I`, or
+any label of two or more characters; a single narrow character such as `l`, `i`, `I` or `|` touches the circle.
 
 ## circle_center
 

@@ -1,8 +1,8 @@
 # DraftSCAD
 
-OpenSCAD is an open-source program used to create 3D objects. Part of its appeal stems from its text-based input, which specifies the objects, placement, rotation, and other features. Unlike some other 3D programs, such as Blender, OpenSCAD provides precise, programmatic control over the characteristics of objects, enabling a streamlined design process without the need for manual adjustments on-screen.
-
-However, creating manual machining equipment or workshop-ready parts often requires detailed, annotated engineering drawings—a capability that OpenSCAD does not natively provide. Furthermore, OpenSCAD's mesh-based output complicates the process of exporting designs to traditional CAD programs for annotation, even as a workaround. This limitation makes it challenging to bridge the gap between OpenSCAD's programmatic design strengths and the practical requirements of fabrication workflows. To address this, the utility library aims to enable the creation of dimensioned drawings directly within OpenSCAD, streamlining the process for designers who rely on this tool.
+DraftSCAD is an OpenSCAD library for dimensioned engineering drawings. It draws lines, arrows, dimensions, leader
+lines, hole centre marks, sheet frames and title blocks, so a part modelled in OpenSCAD can be documented in OpenSCAD,
+without exporting it to another CAD program to annotate it.
 
 <img src="docs/assets/images/example_CM.png" alt="Canny Machines Example" height="400"><img src="docs/assets/images/example_DS.png" alt="Don Smiley Example" height="400">
 
@@ -28,29 +28,26 @@ translate([ 0, 2.4, 1 ]) dimensions(4.5);
 
 Preview with F5, then set the view to Top and Orthogonal. [Getting started](docs/getting-started.md) continues from here.
 
-## Approach
+## How it works
 
-This library employs a top-down view in OpenSCAD, with dimensioned lines and text displayed on the XY plane. By combining multiple views of your object with projected and translated dimensioned lines, you can create the illusion of a complete dimensioned drawing.
-
-A number of elements must come together to implement dimensioning:
-
-- Lines, with or without arrows.
-- Annotated dimensions and other textual descriptions.
-- Support for common annotation conventions.
-
-The library includes a partial implementation of these features, making it functional yet extensible for future improvements.
+A drawing is an ordinary OpenSCAD scene looked at from directly above. Each view is the part placed on the XY plane in
+the orientation that view needs, with its annotations as thin 3D shapes on a plane above it. With the camera looking
+straight down in orthogonal projection, the scene reads as a flat drawing; nothing is projected or flattened. The
+[docs home page](https://cameronbrooks11.github.io/DraftSCAD/) says more.
 
 ## What is in the library
 
-| Module                                    | Draws                                           |
-| ----------------------------------------- | ----------------------------------------------- |
-| `line`                                    | A line, with an optional arrow at either end    |
-| `dimensions`                              | A dimension line labelled with its length       |
-| `leader_line`                             | An angled arrow with a shoulder and a label     |
-| `circle_center`                           | Centre marks for a hole                         |
-| `draw_sheet`                              | A sheet frame with an optional dot or line grid |
-| `titleblock`                              | A title block from lists of lines and text      |
-| `titleblock0`, `titleblock1`, `revblock0` | Ready-made title and revision blocks            |
+| Module                                    | Draws                                                        |
+| ----------------------------------------- | ------------------------------------------------------------ |
+| `line`                                    | A line, with an optional arrow at either end                 |
+| `arrow`                                   | One arrowhead                                                |
+| `dimensions`                              | A dimension line, labelled with its length or with your text |
+| `leader_line`                             | An angled arrow with a shoulder and a label                  |
+| `circle_center`                           | Centre marks for a hole                                      |
+| `draw_sheet`                              | A sheet frame with an optional dot or line grid              |
+| `draw_frame`, `draw_grid`                 | The sheet frame or grid on its own                           |
+| `titleblock`                              | A title block from lists of lines and text                   |
+| `titleblock0`, `titleblock1`, `revblock0` | Ready-made title and revision blocks                         |
 
 The [reference](docs/reference/index.md) has every parameter.
 
