@@ -170,8 +170,11 @@ module dimensions(
     text_color = DEF_TEXT_COLOR,
     text = undef
 ) {
-    assert(is_undef(text) || is_string(text) || is_num(text), str("dimensions(): text must be a string or a number, not ", text));
-    label = str(is_undef(text) ? length : text);
+    // An assert inside the expression runs before label is used; an assert statement would run after the
+    // module's assignments, too late to stop dd_text_units() on a bad value.
+    label =
+        assert(is_undef(text) || is_string(text) || is_num(text), "dimensions(): text must be a string or a number")
+        str(is_undef(text) ? length : text);
     text_width = dd_text_units(label) * DIM_FONTSCALE;
     pad = DIM_FONTSCALE * 3; // clear space on each side of a label set into the line
     gap = text_width + pad * 2; // break in the line for a centred label
@@ -259,8 +262,9 @@ module leader_line(
     color = DEF_LINE_COLOR,
     text_color = DEF_TEXT_COLOR
 ) {
-    assert(is_undef(text) || is_string(text) || is_num(text), str("leader_line(): text must be a string or a number, not ", text));
-    label = is_undef(text) ? "" : str(text);
+    label =
+        assert(is_undef(text) || is_string(text) || is_num(text), "leader_line(): text must be a string or a number")
+        is_undef(text) ? "" : str(text);
     text_width = dd_text_units(label) * DIM_FONTSCALE;
     space = DIM_FONTSCALE * 6;
 
