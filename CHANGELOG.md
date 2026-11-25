@@ -19,8 +19,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `dd_text_units()`, which estimates the width of a label: each printable ASCII character counts its advance in the
   default font. It is exact for most ASCII labels; a pair the font kerns, such as `11` or `AV`, comes out slightly
   wide (#2, #26).
-- `just fmt` and `just fmt-check`, which format the `.scad` sources with topiary; `just check` runs `fmt-check` first
-  (#31).
+- `just fmt` and `just fmt-check`, which format the `.scad` sources with topiary, in place of `.clang-format`;
+  `just check` runs `fmt-check` first (#31).
 - `just docs-check`, part of `just check`, which evaluates every `scad` block in the README and `docs/` that includes
   or uses a file, checks `scripts/images.tsv`, and reports an OpenSCAD fence it cannot read, such as one in a list, a
   quote or under another spelling (#28, #38, #46).
@@ -40,33 +40,30 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `dimensions()` with `DIM_LEFT` and `DIM_RIGHT` puts the label the same short distance from its arrow on either
   side. The right-hand label used to sit a full label width away (#2).
 - `dimensions()` with `DIM_OUTSIDE` puts the label past the right-hand arrow when it does not fit between the arrows,
-  where it used to be drawn across them, and the outside arrows are at least two arrowheads long (#2).
+  where it used to be drawn across them (#2).
 - A left-hand `leader_line()` label is right-aligned against its shoulder line (#2).
 - The circle drawn by `leader_line(do_circle = true)` is sized from the label, so its edge meets the end of the
-  shoulder line. For digits and most labels it is smaller than in 0.1.0; for a single wide letter such as `M` it is
+  shoulder line. For digits and most labels it is smaller than in 0.1.0; for a single capital letter it is usually
   larger (#2, #26).
 - CI's required `test` job runs on a pinned OpenSCAD 2026.10.15 snapshot and checks formatting. OpenSCAD 2021.01,
   which CI ran in 0.1.0, now runs in a separate `compat-2021` job that is not required (#31, #33).
-- The documentation site is built with the docs engine instead of the Jekyll setup in `docs/` (#29, #30).
-
-### Removed
-
-- `.clang-format`, replaced by topiary (#31).
-- The Jekyll site files in `docs/`: `Gemfile`, `Gemfile.lock`, `_config.yml`, the OpenSCAD lexer plugin and the
-  colour schemes (#29).
+- The documentation site is built with the docs engine; the Jekyll setup in `docs/` is gone. The site's address is
+  unchanged (#29, #30).
 
 ### Fixed
 
 - Dimension labels overlapped arrows and the dimension line, most visibly at a large `SCALING_FACTOR` (#2).
-- `dimensions()` with `DIM_CENTER` produced negative-size geometry when the label did not fit. It now draws the
-  outside-arrows form (#2).
+- `dimensions()` with `DIM_CENTER` produced negative-size geometry when the label did not fit, and so did a short
+  `DIM_OUTSIDE`, whose arrows had shafts of negative length. A `DIM_CENTER` that does not fit now draws the
+  outside-arrows form, and outside arrows are at least two arrowheads long (#2).
 - The labels of `dimensions()`, `leader_line()` and `titleblock()` were 2D beside 3D lines, so a render (F6) or an
   STL export dropped them with a warning. They are now extruded to the height of the lines, and look the same from
   above. On OpenSCAD 2021.01, rendering a drawing with many labels can take minutes (#39).
 - `leader_line(text = ...)` given a number, such as a balloon's `text = 1`, warned and drew no label. It now draws the
-  number as `str()` writes it; any value but a string, a finite number or `undef` stops with an `assert` (#43, #50).
-- `just check` and `just test` passed an example or fixture whose `assert` failed, on every OpenSCAD, and `just check`
-  passed some warnings on 2021.01, such as an unknown variable (#31, #34).
+  number as `str()` writes it. An explicit `text = undef`, which also warned, draws the line alone, and any value but
+  a string, a finite number or `undef` stops with an `assert` where it used to warn (#43, #50).
+- `just check` and `just test` passed an example or fixture whose `assert` failed, on OpenSCAD 2026.10.15 and
+  2021.01, and on 2021.01 they passed some warnings, such as an unknown variable (#31, #34).
 
 ## [0.1.0] - 2026-11-10
 
