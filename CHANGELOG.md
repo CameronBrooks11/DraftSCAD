@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-24
+
 ### Added
 
 - The `TEXT_SIZE` override, read as `DIM_TEXT_SIZE`. It sets the height of dimension and leader labels without
@@ -13,13 +15,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `dd_text_units()`, which estimates the width of a label. It is exact for numbers in the default font (#2).
 - `dimensions(text = ...)`, a custom label in place of `str(length)`, for a prefix, units, a tolerance or a set
   precision. Without it the label is unchanged (#26).
+- `just docs-check`, part of `just check`, which evaluates every `scad` block in the README and `docs/` that includes
+  or uses a file, and reports any OpenSCAD-looking fence it does not evaluate (#28, #38, #46).
+- `just images`, which redraws the pictures in `docs/assets/images` from `scripts/images.tsv` (#28).
+- `scripts/scad-check.sh`, which checks the examples, the fixtures and the docs' code: on OpenSCAD's Manifold backend
+  it also builds the geometry, where a missing `import()` file or 2D mixed with 3D shows up, and it fails on
+  `DEPRECATED` and prefixed warnings such as `FONT-WARNING` too (#36, #44).
+- A CI job that evaluates the examples, the docs' code and the fixtures on OpenSCAD 2021.01. A fixture can declare
+  `// min-openscad: VERSION` to be skipped on an older OpenSCAD (#33), or `// expect-error: REGEX` to test an
+  assert (#50).
+- Tests of the tooling itself: `scad-check.sh` against a fake OpenSCAD, and how `docs-check` reads the docs' fences
+  (#46, #49, #53).
 
 ### Changed
 
 - `dd_text_units()` counts each printable ASCII character at its own advance in the default font, not as a digit, so
   a dimension label with letters gets the room it needs, and so does the circle of a `leader_line(do_circle = true)`
   label with letters. Numbers are unchanged (#26).
-
 - `dimensions()` centres its label in the break in the line, and sizes the break from the label's estimated width.
   Labels sit slightly differently from 0.1.0 (#2).
 - `dimensions()` with `DIM_LEFT` and `DIM_RIGHT` puts the label the same short distance from its arrow on either
@@ -44,6 +56,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   is not a string or a finite number. `dimensions(text = "")` broke the line around an empty label; the line is now
   unbroken, and a short `DIM_CENTER` dimension with an empty label keeps its arrows inside down to 16 line widths,
   where it used to switch to the outside form sooner (#50).
+- `just check` passed an example that raised a warning on OpenSCAD 2026.10.15 (#34).
 
 ## [0.1.0] - 2026-11-10
 
@@ -126,5 +139,6 @@ Rebuilt from the commit log. These changes predate the first tag and are all par
 
 - Imported from [pwpearson/dimensional-drawings](https://github.com/pwpearson/dimensional-drawings).
 
-[Unreleased]: https://github.com/CameronBrooks11/DraftSCAD/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/CameronBrooks11/DraftSCAD/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/CameronBrooks11/DraftSCAD/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/CameronBrooks11/DraftSCAD/releases/tag/v0.1.0
