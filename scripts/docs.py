@@ -37,7 +37,7 @@ OPENSCAD = os.environ.get("OPENSCAD", "openscad")
 DEFAULT_FLAGS = "--camera=0,0,0,0,0,0,0 --viewall --autocenter --projection=o --imgsize=900,500"
 
 FENCE = re.compile(r"(?ms)^```scad[ \t]*\n(.*?)^```[ \t]*$")
-OPENING = re.compile(r"^([ \t]*)(```|~~~)[ \t]*([^\s`]*)")
+FENCE_LINE = re.compile(r"^([ \t]*)(`{3,}|~{3,})(.*)$")
 FILE = re.compile(r"\A// file: (\S+)")
 INCLUDES = re.compile(r"(?m)^\s*(?:include|use)\s*<[^>]+>")
 LIBRARY = re.compile(r"(?m)^\s*(?:include|use)\s*<DraftSCAD/")
@@ -73,22 +73,32 @@ def blocks(page):
 
 
 def stray_fences(page):
-    """Fences that look like OpenSCAD but are not written as an unindented ```scad, which the
-    check would otherwise skip without a word."""
+    """Fences that look like OpenSCAD but that the check does not evaluate, which it would otherwise
+    skip without a word. The evaluated blocks are the ones FENCE finds, so an OpenSCAD opener counts
+    only where a FENCE match starts on its line: that catches an opener FENCE reads differently, and
+    one whose block FENCE never closes. Lines split on \n only, as FENCE counts them."""
+    text, page_blocks = blocks(page)
+    evaluated = {b.line for b in page_blocks}
     stray, opener = [], None
-    for n, line in enumerate(page.read_text().splitlines(), 1):
-        m = OPENING.match(line)
+    for n, line in enumerate(text.split("\n"), 1):
+        m = FENCE_LINE.match(line)
         if not m:
             continue
+        fence, info = m.group(2), m.group(3).strip()
         if opener:
-            # Only a fence of the same kind, and no shorter, closes the block.
-            if m.group(2) == opener[:3] and line.strip().startswith(opener) and not m.group(3):
+            # Only a bare fence of the same character, and no shorter, closes the block.
+            if fence[0] == opener[0] and len(fence) >= len(opener) and not info:
                 opener = None
             continue
-        opener = re.match(r"[ \t]*(`{3,}|~{3,})", line).group(1)
-        indent, info = m.group(1), m.group(3).strip("{}").lower()
-        if info in ("scad", "openscad") and (indent or line.rstrip() != "```scad"):
-            stray.append(f"{page.relative_to(REPO)}:{n}: write an OpenSCAD block as an unindented ```scad fence")
+        # A backtick fence's info string has no backtick: ```x``` starts a line of inline code.
+        if fence[0] == "`" and "`" in info:
+            continue
+        opener = fence
+        words = info.split()
+        lang = words[0].strip("{}").lstrip(".").lower() if words else ""
+        if lang in ("scad", "openscad") and n not in evaluated:
+            stray.append(f"{page.relative_to(REPO)}:{n}: the check does not read this OpenSCAD block: "
+                         "open it with an unindented ```scad line and close it with a ``` line")
     return stray
 
 
@@ -147,12 +157,18 @@ def png_is_blank(path):
         if tag == b"IDAT":
             idat += data[pos + 8:pos + 8 + length]
         pos += 12 + length
+    if width * height > 100_000_000:
+        raise ValueError(f"{path.name}: {width}x{height} is no picture of a drawing")
     raw = zlib.decompress(idat)
     stride = width * bpp
+    if len(raw) != height * (stride + 1):
+        raise ValueError(f"{path.name}: {len(raw)} bytes of pixel data, not {height * (stride + 1)}")
     prev = bytearray(stride)
     first = None
     for y in range(height):
         f = raw[y * (stride + 1)]
+        if f > 4:
+            raise ValueError(f"{path.name}: row {y} has filter type {f}")
         line = bytearray(raw[y * (stride + 1) + 1:(y + 1) * (stride + 1)])
         for i in range(stride):
             a = line[i - bpp] if i >= bpp else 0
@@ -318,8 +334,12 @@ def images(patterns):
                 found = openscad([*shlex.split(flags), "-o", str(out), target], cwd, env)
             if not found and not out.is_file():
                 found = ["wrote no picture"]
-            if not found and png_is_blank(out):
-                found = ["drew a picture of one colour: the block draws nothing visible"]
+            if not found:
+                try:
+                    if png_is_blank(out):
+                        found = ["drew a picture of one colour: the block draws nothing visible"]
+                except (ValueError, IndexError, struct.error, zlib.error) as e:
+                    found = [f"cannot read the picture OpenSCAD wrote: {e}"]
             if found:
                 failed += 1
                 print(f"FAIL {name}")
