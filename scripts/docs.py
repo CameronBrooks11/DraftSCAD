@@ -36,21 +36,25 @@ WARNING = re.compile(r"([A-Z]+-)?(WARNING|ERROR)|DEPRECATED")
 OPENSCAD = os.environ.get("OPENSCAD", "openscad")
 DEFAULT_FLAGS = "--camera=0,0,0,0,0,0,0 --viewall --autocenter --projection=o --imgsize=900,500"
 
-FENCE = re.compile(r"(?ms)^```scad[ \t]*\n(.*?)^```[ \t]*$")
-FENCE_LINE = re.compile(r"^([ \t]*)(`{3,}|~{3,})(.*)$")
+OPENING = re.compile(r"^( {0,3})(`{3,}|~{3,})(.*)$")
+CLOSING = re.compile(r"^ {0,3}(`{3,}|~{3,})[ \t]*$")
+CONTAINERS = re.compile(r"^(?:[ \t]*(?:>|[-*+]|\d{1,9}[.)])?[ \t]?)*")
+HTML_BLOCK = re.compile(r"^ {0,3}(<!--|<(pre|script|style|textarea)\b)", re.I)
 FILE = re.compile(r"\A// file: (\S+)")
 INCLUDES = re.compile(r"(?m)^\s*(?:include|use)\s*<[^>]+>")
 LIBRARY = re.compile(r"(?m)^\s*(?:include|use)\s*<DraftSCAD/")
 IMAGE_REF = re.compile(r"!\[[^\]]*\]\(([^)\s]+)\)|<img\s[^>]*src=\"([^\"]+)\"")
+STRAY = ("the check does not read this OpenSCAD block: write it at the top level of the page, opened "
+         "with an unindented ```scad line and closed with a ``` line")
 
 
 class Block:
-    def __init__(self, page, match, text):
+    def __init__(self, page, code, start, end, line):
         self.page = page
-        self.code = match.group(1)
-        self.start = match.start()
-        self.end = match.end()
-        self.line = text.count("\n", 0, match.start()) + 1
+        self.code = code
+        self.start = start
+        self.end = end
+        self.line = line
         m = FILE.match(self.code)
         self.file = m.group(1) if m else None
 
@@ -67,39 +71,82 @@ def pages():
     return [REPO / "README.md"] + sorted((REPO / "docs").rglob("*.md"))
 
 
-def blocks(page):
+def language(info):
+    """The language a fence's info string names: its first word, as in ```scad, ```{.scad} or
+    ```OpenSCAD title="x"."""
+    words = info.split()
+    return words[0].strip("{}").lstrip(".").lower() if words else ""
+
+
+def scan(page):
+    """The page's evaluated scad blocks, and the lines that look like OpenSCAD fences but that the
+    check does not evaluate.
+
+    One pass over the lines, with CommonMark's fence rules: a fence opens on 3 or more backticks or
+    tildes indented 0 to 3 spaces (a backtick fence's info string has no backtick), and closes on a
+    bare fence of the same character, no shorter, indented 0 to 3 spaces. Lines inside a fence, an
+    HTML comment or a <pre>, <script>, <style> or <textarea> block are content, not Markdown.
+
+    A block is evaluated only when it is a top-level fence opened by a line that is exactly
+    ```scad, with spaces at most after it, and closed. Anything else that looks like an OpenSCAD
+    fence, once indentation, '>' and list markers are stripped from its line, is reported: a fence
+    in a blockquote or a list item, one indented 4 spaces or more, another spelling, or one never
+    closed. Nothing that looks like OpenSCAD is skipped without a word."""
     text = page.read_text()
-    return text, [Block(page, m, text) for m in FENCE.finditer(text)]
+    lines = text.split("\n")
+    offsets = [0]
+    for line in lines:
+        offsets.append(offsets[-1] + len(line) + 1)
+    found, stray = [], []
+    fence = html_end = None
+    for i, line in enumerate(lines):
+        n = i + 1
+        if html_end:
+            if html_end in line.lower():
+                html_end = None
+            continue
+        if fence:
+            m = CLOSING.match(line)
+            if m and m.group(1)[0] == fence["char"] and len(m.group(1)) >= fence["len"]:
+                if fence["evaluated"]:
+                    code = "".join(f + "\n" for f in lines[fence["line"]:i])
+                    found.append(Block(page, code, offsets[fence["line"] - 1], offsets[i] + len(line), fence["line"]))
+                fence = None
+            continue
+        m = OPENING.match(line)
+        if m and not (m.group(2)[0] == "`" and "`" in m.group(3)):
+            evaluated = m.group(1) == "" and m.group(2) == "```" and m.group(3).rstrip(" \t") == "scad"
+            is_scad = language(m.group(3)) in ("scad", "openscad")
+            if is_scad and not evaluated:
+                stray.append(n)
+            fence = {"char": m.group(2)[0], "len": len(m.group(2)), "line": n, "evaluated": evaluated,
+                     "scad": is_scad}
+            continue
+        h = HTML_BLOCK.match(line)
+        if h:
+            end = "-->" if h.group(1) == "<!--" else f"</{h.group(2).lower()}>"
+            if end not in line.lower()[h.end():]:
+                html_end = end
+            continue
+        # Not a fence to CommonMark here, but a reader or another renderer may take it for one.
+        rest = line[CONTAINERS.match(line).end():]
+        m = OPENING.match(rest)
+        if m and language(m.group(3)) in ("scad", "openscad"):
+            stray.append(n)
+    if fence and fence["scad"]:
+        # An OpenSCAD block never closed runs to the end of the page, unread.
+        if fence["line"] not in stray:
+            stray.append(fence["line"])
+    return text, found, [f"{page.relative_to(REPO)}:{n}: {STRAY}" for n in sorted(stray)]
+
+
+def blocks(page):
+    text, found, _ = scan(page)
+    return text, found
 
 
 def stray_fences(page):
-    """Fences that look like OpenSCAD but that the check does not evaluate, which it would otherwise
-    skip without a word. The evaluated blocks are the ones FENCE finds, so an OpenSCAD opener counts
-    only where a FENCE match starts on its line: that catches an opener FENCE reads differently, and
-    one whose block FENCE never closes. Lines split on \n only, as FENCE counts them."""
-    text, page_blocks = blocks(page)
-    evaluated = {b.line for b in page_blocks}
-    stray, opener = [], None
-    for n, line in enumerate(text.split("\n"), 1):
-        m = FENCE_LINE.match(line)
-        if not m:
-            continue
-        fence, info = m.group(2), m.group(3).strip()
-        if opener:
-            # Only a bare fence of the same character, and no shorter, closes the block.
-            if fence[0] == opener[0] and len(fence) >= len(opener) and not info:
-                opener = None
-            continue
-        # A backtick fence's info string has no backtick: ```x``` starts a line of inline code.
-        if fence[0] == "`" and "`" in info:
-            continue
-        opener = fence
-        words = info.split()
-        lang = words[0].strip("{}").lstrip(".").lower() if words else ""
-        if lang in ("scad", "openscad") and n not in evaluated:
-            stray.append(f"{page.relative_to(REPO)}:{n}: the check does not read this OpenSCAD block: "
-                         "open it with an unindented ```scad line and close it with a ``` line")
-    return stray
+    return scan(page)[2]
 
 
 def write_page(page_blocks, d):
